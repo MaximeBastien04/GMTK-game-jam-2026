@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 public class MouseConstraint : MonoBehaviour
 {
@@ -14,14 +16,20 @@ public class MouseConstraint : MonoBehaviour
 
     private Vector2 virtualMousePosition;
 
+    private GameObject currentHoveredObject;
+
+    private PointerEventData pointerEventData;
+
     private void Start()
     {
-        // Start the virtual mouse in the center of the computer screen
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
         virtualMousePosition = computerScreen.rect.center;
 
+        pointerEventData = new PointerEventData(EventSystem.current);
+
         UpdateCursorPosition();
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Confined;
     }
 
     private void Update()
@@ -29,24 +37,19 @@ public class MouseConstraint : MonoBehaviour
         if (Mouse.current == null)
             return;
 
-        // Read physical mouse movement
         Vector2 mouseDelta = Mouse.current.delta.ReadValue();
 
-        // Move virtual mouse
         virtualMousePosition += mouseDelta * mouseSensitivity;
 
-        // Calculate boundaries
         float minX = computerScreen.rect.xMin;
         float maxX = computerScreen.rect.xMax;
 
         float minY = computerScreen.rect.yMin;
         float maxY = computerScreen.rect.yMax;
 
-        // Account for cursor size
         float cursorHalfWidth = virtualCursor.rect.width / 2f;
         float cursorHalfHeight = virtualCursor.rect.height / 2f;
 
-        // Clamp cursor inside screen
         virtualMousePosition.x = Mathf.Clamp(
             virtualMousePosition.x,
             minX + cursorHalfWidth,
@@ -60,10 +63,61 @@ public class MouseConstraint : MonoBehaviour
         );
 
         UpdateCursorPosition();
+
+        UpdateUIHover();
     }
 
     private void UpdateCursorPosition()
     {
         virtualCursor.anchoredPosition = virtualMousePosition;
+    }
+
+    private void UpdateUIHover()
+    {
+        pointerEventData.position =
+            RectTransformUtility.WorldToScreenPoint(
+                computerScreen.GetComponentInParent<Canvas>().worldCamera,
+                virtualCursor.position
+            );
+
+        List<RaycastResult> results = new List<RaycastResult>();
+
+        EventSystem.current.RaycastAll(pointerEventData, results);
+
+        GameObject hoveredObject = null;
+
+        if (results.Count > 0)
+        {
+            hoveredObject = results[0].gameObject;
+        }
+
+        if (hoveredObject != currentHoveredObject)
+        {
+            if (currentHoveredObject != null)
+            {
+                ExecuteEvents.Execute(
+                    currentHoveredObject,
+                    pointerEventData,
+                    ExecuteEvents.pointerExitHandler
+                );
+            }
+
+            if (hoveredObject != null)
+            {
+                ExecuteEvents.Execute(
+                    hoveredObject,
+                    pointerEventData,
+                    ExecuteEvents.pointerEnterHandler
+                );
+            }
+
+            currentHoveredObject = hoveredObject;
+        }
+    }
+
+    private void OnDisable()
+    {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 }
