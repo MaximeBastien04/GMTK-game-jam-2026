@@ -12,7 +12,7 @@ public class AdSpawner : MonoBehaviour
     }
 
     [Header("Ad Settings")]
-    [SerializeField] private GameObject adPrefab;
+    [SerializeField] private GameObject[] adPrefabs;
     [SerializeField] private RectTransform adContainer;
     [SerializeField] private AdColorVariant[] adColorVariants;
 
@@ -20,36 +20,54 @@ public class AdSpawner : MonoBehaviour
     [SerializeField] private float minimumSpawnTime = 0.5f;
     [SerializeField] private float maximumSpawnTime = 3f;
 
-    private Vector2 prefabAdSize;
-    private Vector3 prefabAdScale;
-
     private void Start()
     {
-        if (adPrefab == null || adContainer == null)
+        if (adContainer == null)
         {
             Debug.LogError(
-                "AdSpawner is missing the Ad Prefab or Ad Container reference."
+                "AdSpawner is missing the Ad Container reference.",
+                this
             );
 
             enabled = false;
             return;
         }
 
-        RectTransform prefabRect =
-            adPrefab.GetComponent<RectTransform>();
-
-        if (prefabRect == null)
+        if (adPrefabs == null || adPrefabs.Length == 0)
         {
             Debug.LogError(
-                "The ad prefab must have a RectTransform component."
+                "AdSpawner does not have any ad prefabs assigned.",
+                this
             );
 
             enabled = false;
             return;
         }
 
-        prefabAdSize = prefabRect.sizeDelta;
-        prefabAdScale = prefabRect.localScale;
+        foreach (GameObject prefab in adPrefabs)
+        {
+            if (prefab == null)
+            {
+                Debug.LogError(
+                    "One of the Ad Prefab entries is empty.",
+                    this
+                );
+
+                enabled = false;
+                return;
+            }
+
+            if (prefab.GetComponent<RectTransform>() == null)
+            {
+                Debug.LogError(
+                    $"The ad prefab '{prefab.name}' must have a RectTransform.",
+                    prefab
+                );
+
+                enabled = false;
+                return;
+            }
+        }
 
         StartCoroutine(SpawnAds());
     }
@@ -71,8 +89,14 @@ public class AdSpawner : MonoBehaviour
 
     private void SpawnAd()
     {
+        GameObject selectedPrefab =
+            adPrefabs[Random.Range(0, adPrefabs.Length)];
+
+        RectTransform prefabRect =
+            selectedPrefab.GetComponent<RectTransform>();
+
         GameObject newAd = Instantiate(
-            adPrefab,
+            selectedPrefab,
             adContainer,
             false
         );
@@ -80,15 +104,11 @@ public class AdSpawner : MonoBehaviour
         RectTransform adRect =
             newAd.GetComponent<RectTransform>();
 
-        // Preserve the exact prefab dimensions and scale.
-        adRect.sizeDelta = prefabAdSize;
-        adRect.localScale = prefabAdScale;
+        // Preserve the selected prefab's exact dimensions and scale.
+        adRect.sizeDelta = prefabRect.sizeDelta;
+        adRect.localScale = prefabRect.localScale;
 
-        /*
-         * Use one anchor point so anchoredPosition behaves consistently.
-         * The pivot is left unchanged because it may be intentionally
-         * configured on the prefab.
-         */
+        // Use a fixed anchor so random positioning is predictable.
         adRect.anchorMin = new Vector2(0.5f, 0.5f);
         adRect.anchorMax = new Vector2(0.5f, 0.5f);
 
@@ -108,27 +128,11 @@ public class AdSpawner : MonoBehaviour
         Image borderImage =
             newAd.GetComponent<Image>();
 
-        Transform closeButtonTransform =
-            newAd.transform.Find("CloseButton");
-
-        if (borderImage == null ||
-            closeButtonTransform == null)
+        if (borderImage == null)
         {
             Debug.LogWarning(
-                "The spawned ad is missing its border Image " +
-                "or a child named CloseButton."
-            );
-
-            return;
-        }
-
-        Image crossImage =
-            closeButtonTransform.GetComponent<Image>();
-
-        if (crossImage == null)
-        {
-            Debug.LogWarning(
-                "CloseButton does not have an Image component."
+                $"The spawned ad '{newAd.name}' has no Image on its root.",
+                newAd
             );
 
             return;
@@ -143,17 +147,36 @@ public class AdSpawner : MonoBehaviour
         borderImage.sprite =
             selectedVariant.borderSprite;
 
-        crossImage.sprite =
-            selectedVariant.crossSprite;
+        /*
+         * Only the normal close-button ad may have a child named
+         * CloseButton with a cross image. The other ad types can safely
+         * skip this part.
+         */
+        Transform closeButtonTransform =
+            newAd.transform.Find("CloseButton");
+
+        if (closeButtonTransform == null)
+        {
+            return;
+        }
+
+        Image crossImage =
+            closeButtonTransform.GetComponent<Image>();
+
+        if (crossImage != null)
+        {
+            crossImage.sprite =
+                selectedVariant.crossSprite;
+        }
     }
 
     private void PositionAdInsideContainer(
         RectTransform adRect
     )
     {
-        Rect containerRect = adContainer.rect;
+        Rect containerRect =
+            adContainer.rect;
 
-        // Calculate the visible dimensions after applying local scale.
         float scaledWidth =
             adRect.rect.width *
             Mathf.Abs(adRect.localScale.x);
@@ -162,12 +185,6 @@ public class AdSpawner : MonoBehaviour
             adRect.rect.height *
             Mathf.Abs(adRect.localScale.y);
 
-        /*
-         * Account for the prefab's pivot.
-         *
-         * For a centered pivot:
-         * leftExtent and rightExtent are each half the width.
-         */
         float leftExtent =
             scaledWidth * adRect.pivot.x;
 
@@ -180,7 +197,6 @@ public class AdSpawner : MonoBehaviour
         float topExtent =
             scaledHeight * (1f - adRect.pivot.y);
 
-        // Valid pivot positions in the container's local coordinates.
         float minLocalX =
             containerRect.xMin + leftExtent;
 
@@ -193,16 +209,12 @@ public class AdSpawner : MonoBehaviour
         float maxLocalY =
             containerRect.yMax - topExtent;
 
-        /*
-         * The ad is too large if either minimum is greater than its
-         * corresponding maximum.
-         */
         if (minLocalX > maxLocalX ||
             minLocalY > maxLocalY)
         {
             Debug.LogWarning(
-                "The scaled ad is larger than the Ad Container. " +
-                "It cannot fit completely inside."
+                $"The ad '{adRect.name}' is larger than the Ad Container.",
+                adRect
             );
 
             adRect.anchoredPosition = Vector2.zero;
@@ -214,11 +226,6 @@ public class AdSpawner : MonoBehaviour
             Random.Range(minLocalY, maxLocalY)
         );
 
-        /*
-         * anchoredPosition is relative to the selected anchor point.
-         * Since the anchors are centered, calculate that anchor's
-         * location inside the parent RectTransform.
-         */
         Vector2 anchorReference = new Vector2(
             containerRect.xMin +
             containerRect.width * adRect.anchorMin.x,
