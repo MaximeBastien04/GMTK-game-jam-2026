@@ -27,7 +27,11 @@ public class MouseConstraint : MonoBehaviour
 
         virtualMousePosition = computerScreen.rect.center;
 
-        pointerEventData = new PointerEventData(EventSystem.current);
+        pointerEventData =
+            new PointerEventData(EventSystem.current);
+
+        pointerEventData.button =
+            PointerEventData.InputButton.Left;
 
         UpdateCursorPosition();
     }
@@ -37,58 +41,81 @@ public class MouseConstraint : MonoBehaviour
         if (Mouse.current == null)
             return;
 
-        Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+        Vector2 mouseDelta =
+            Mouse.current.delta.ReadValue();
 
-        virtualMousePosition += mouseDelta * mouseSensitivity;
+        virtualMousePosition +=
+            mouseDelta * mouseSensitivity;
 
-        float minX = computerScreen.rect.xMin;
-        float maxX = computerScreen.rect.xMax;
+        float minX =
+            computerScreen.rect.xMin;
 
-        float minY = computerScreen.rect.yMin;
-        float maxY = computerScreen.rect.yMax;
+        float maxX =
+            computerScreen.rect.xMax;
 
-        float cursorHalfWidth = virtualCursor.rect.width / 2f;
-        float cursorHalfHeight = virtualCursor.rect.height / 2f;
+        float minY =
+            computerScreen.rect.yMin;
 
-        virtualMousePosition.x = Mathf.Clamp(
-            virtualMousePosition.x,
-            minX + cursorHalfWidth,
-            maxX - cursorHalfWidth
-        );
+        float maxY =
+            computerScreen.rect.yMax;
 
-        virtualMousePosition.y = Mathf.Clamp(
-            virtualMousePosition.y,
-            minY + cursorHalfHeight,
-            maxY - cursorHalfHeight
-        );
+        float cursorHalfWidth =
+            virtualCursor.rect.width / 2f;
+
+        float cursorHalfHeight =
+            virtualCursor.rect.height / 2f;
+
+        virtualMousePosition.x =
+            Mathf.Clamp(
+                virtualMousePosition.x,
+                minX + cursorHalfWidth,
+                maxX - cursorHalfWidth
+            );
+
+        virtualMousePosition.y =
+            Mathf.Clamp(
+                virtualMousePosition.y,
+                minY + cursorHalfHeight,
+                maxY - cursorHalfHeight
+            );
 
         UpdateCursorPosition();
 
         UpdateUIHover();
+
+        HandleMouseClick();
     }
 
     private void UpdateCursorPosition()
     {
-        virtualCursor.anchoredPosition = virtualMousePosition;
+        virtualCursor.anchoredPosition =
+            virtualMousePosition;
     }
 
     private void UpdateUIHover()
     {
         pointerEventData.position =
             RectTransformUtility.WorldToScreenPoint(
-                computerScreen.GetComponentInParent<Canvas>().worldCamera,
+                computerScreen
+                    .GetComponentInParent<Canvas>()
+                    .worldCamera,
                 virtualCursor.position
             );
 
-        List<RaycastResult> results = new List<RaycastResult>();
+        List<RaycastResult> results =
+            new List<RaycastResult>();
 
-        EventSystem.current.RaycastAll(pointerEventData, results);
+        EventSystem.current.RaycastAll(
+            pointerEventData,
+            results
+        );
 
         GameObject hoveredObject = null;
 
         if (results.Count > 0)
         {
-            hoveredObject = results[0].gameObject;
+            hoveredObject =
+                results[0].gameObject;
         }
 
         if (hoveredObject != currentHoveredObject)
@@ -111,13 +138,48 @@ public class MouseConstraint : MonoBehaviour
                 );
             }
 
-            currentHoveredObject = hoveredObject;
+            currentHoveredObject =
+                hoveredObject;
+        }
+    }
+
+    private void HandleMouseClick()
+    {
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            if (currentHoveredObject != null)
+            {
+                ExecuteEvents.Execute(
+                    currentHoveredObject,
+                    pointerEventData,
+                    ExecuteEvents.pointerDownHandler
+                );
+            }
+        }
+
+        if (Mouse.current.leftButton.wasReleasedThisFrame)
+        {
+            if (currentHoveredObject != null)
+            {
+                ExecuteEvents.Execute(
+                    currentHoveredObject,
+                    pointerEventData,
+                    ExecuteEvents.pointerUpHandler
+                );
+
+                ExecuteEvents.Execute(
+                    currentHoveredObject,
+                    pointerEventData,
+                    ExecuteEvents.pointerClickHandler
+                );
+            }
         }
     }
 
     private void OnDisable()
     {
         Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
+        Cursor.lockState =
+            CursorLockMode.None;
     }
 }
