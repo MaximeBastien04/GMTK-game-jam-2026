@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e972375ef0e36e64cbd32c356394d5ac, type: 3}
+  m_Name: Clover
+  m_EditorClassIdentifier: Assembly-CSharp::ShopItemData
+  itemName: Clover
+  description: Increases the amount of money an ads gives for the day
+  price: 50
+  sprite: {fileID: 21300000, guid: e1717da6292277b4c92d2f7688e092ed, type: 3}

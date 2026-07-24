@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class InsideButtonAd : Ad
 {
-    protected override int RewardAmount => 2;
+    protected override int RewardAmount => 1;
 
     [SerializeField] private Button insideButton;
 

@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class CloseButtonAd : Ad
 {
-    protected override int RewardAmount => 1;
+    protected override int RewardAmount => 2;
 
     [SerializeField] private Button closeButton;
 

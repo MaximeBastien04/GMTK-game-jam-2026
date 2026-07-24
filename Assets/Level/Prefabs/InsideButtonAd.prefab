@@ -326,8 +326,8 @@ MonoBehaviour:
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 0}
     m_HighlightedColor: {r: 0.8490566, g: 0.14017442, b: 0.14017442, a: 0.43137255}
-    m_PressedColor: {r: 0.6037736, g: 0, b: 0, a: 1}
-    m_SelectedColor: {r: 0.3915094, g: 0.81018883, b: 1, a: 1}
+    m_PressedColor: {r: 0.6037736, g: 0, b: 0, a: 0.47058824}
+    m_SelectedColor: {r: 1, g: 1, b: 1, a: 0}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -359,7 +359,7 @@ GameObject:
   - component: {fileID: 8737620599765335500}
   - component: {fileID: 574982592327588308}
   m_Layer: 5
-  m_Name: Button
+  m_Name: InsideButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

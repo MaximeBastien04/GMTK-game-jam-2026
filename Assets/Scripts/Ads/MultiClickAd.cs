@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class MultiClickAd : Ad
 {
-    protected override int RewardAmount => 3;
+    protected override int RewardAmount => 5;
 
     [SerializeField] private Button clickButton;
     [SerializeField] private TMP_Text clickCounterText;

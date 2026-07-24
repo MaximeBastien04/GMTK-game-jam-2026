@@ -1,0 +1,52 @@
+Demo sprint 3:
+
+Employee Center:
+- Show that banner has been updated to the provided banner
+- Click on software & applications topic
+- Show that the quick link 'License request' has been added
+
+Problem:
+- open 2-3 notification previews to show that the template has been applied (some through template, some through layout) (filter by= updated by me)
+
+
+Change:
+- open 2-3 notification previews to show that the template has been applied (some through template, some through layout) (filter by= updated by me)
+- show created change groups: Fujitsu Change Management, IT Management Approval Group, VP Approval Group.
+
+- go to Change Request (backend)
+- Create a new change request
+- mention that the on hold checkbox has been deactivated
+- show that the Communication plan field has been added
+- Show that short description, description and the fields under planning are not mandatory (since the state is new)
+- change the state to asses
+- show that short description, description and the fields under planning have become mandatory
+- fill in random values on the mandatory fields
+
+- Open risk assessment
+- fill in lowest values
+- show that risk is low
+- open risk assessment again
+- fill in highest values
+- show that risk is very high
+
+Blackout and maintenance schedules:
+- change the planned start date and planned end date to Monday 27/07/2026 01:00:00 - 27/07/2026 02:00:00
+- add random catalog item
+- click on check conflicts button on conflicts tab
+- click close
+- show the conflict status = conflict
+- click on the Conflict Calendar at the top of the form
+- move the conflict outside of the calendar
+- save the moved conflict
+- show the conflict status = No Conflict
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+VISHU DEMO:
+- 6425 Standard Changes Configuration
+- 6374 Configure SAP Password Catalog Item
+- 6362 Configure Tablet Request Catalog Item
+- 6376 Configure License Request Catalog Item
+- Dashboard & Reports
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
