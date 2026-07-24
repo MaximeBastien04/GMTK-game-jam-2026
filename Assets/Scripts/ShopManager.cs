@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class ShopManager : MonoBehaviour
 {
@@ -26,6 +27,8 @@ public class ShopManager : MonoBehaviour
 
     [Header("Inventory")]
     [SerializeField] private InventoryManager inventoryManager;
+
+    public event Action<ShopItemData> ItemPurchased;
 
     private void Awake()
     {
@@ -53,6 +56,14 @@ public class ShopManager : MonoBehaviour
 
     private void GenerateShop()
     {
+        for (int i = 0; i < itemPlacements.Length; i++)
+        {
+            if (itemPlacements[i] != null)
+            {
+                itemPlacements[i].gameObject.SetActive(true);
+            }
+        }
+
         if (allItems == null ||
             allItems.Count == 0)
         {
@@ -112,7 +123,7 @@ public class ShopManager : MonoBehaviour
         for (int i = availableItems.Count - 1; i > 0; i--)
         {
             int randomIndex =
-                Random.Range(0, i + 1);
+                UnityEngine.Random.Range(0, i + 1);
 
             ShopItemData temporaryItem =
                 availableItems[i];
@@ -248,6 +259,14 @@ public class ShopManager : MonoBehaviour
                 selectedItem.price
             );
 
+        selectedPlacement.MarkAsPurchased();
+
+        ApplyPurchasedItem(selectedItem);
+
+        ItemPurchased?.Invoke(selectedItem);
+
+        UpdateBuyButton();
+
         ShowDescription();
 
         if (!purchaseSuccessful)
@@ -264,6 +283,53 @@ public class ShopManager : MonoBehaviour
 
         ApplyPurchasedItem(selectedItem);
         UpdateBuyButton();
+    }
+
+    public void GenerateTutorialShop(
+    ShopItemData tutorialItem
+)
+    {
+        if (tutorialItem == null)
+        {
+            Debug.LogError(
+                "No tutorial item was provided.",
+                this
+            );
+
+            return;
+        }
+
+        selectedPlacement = null;
+        currentItemDescription =
+            string.Empty;
+
+        for (int i = 0; i < itemPlacements.Length; i++)
+        {
+            if (itemPlacements[i] == null)
+            {
+                continue;
+            }
+
+            bool shouldShowItem = i == 0;
+
+            itemPlacements[i].gameObject.SetActive(
+                shouldShowItem
+            );
+
+            if (shouldShowItem)
+            {
+                itemPlacements[i].Initialize(
+                    tutorialItem,
+                    this
+                );
+            }
+        }
+
+        if (itemPlacements.Length > 0 &&
+            itemPlacements[0] != null)
+        {
+            SelectItem(itemPlacements[0]);
+        }
     }
 
     private void ApplyPurchasedItem(

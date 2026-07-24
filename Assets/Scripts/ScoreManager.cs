@@ -43,6 +43,13 @@ public class ScoreManager : MonoBehaviour
         MoneyChanged();
     }
 
+    public void SetScore(int amount)
+    {
+        CurrentScore = Mathf.Max(0, amount);
+
+        MoneyChanged();
+    }
+
     public bool CanAfford(int amount)
     {
         return CurrentScore >= amount;
