@@ -6,6 +6,8 @@ public class GameLoopManager : MonoBehaviour
 {
     private enum GameState
     {
+        Login,
+        Tutorial,
         Shop,
         Minigame,
         GameOver
@@ -19,6 +21,8 @@ public class GameLoopManager : MonoBehaviour
     [SerializeField] private int totalShifts = 30;
 
     [Header("Game Objects")]
+    [SerializeField] private GameObject loginObject;
+    [SerializeField] private GameObject tutorialObject;
     [SerializeField] private GameObject minigameObject;
     [SerializeField] private GameObject shopObject;
     [SerializeField] private GameObject gameOverObject;
@@ -26,29 +30,43 @@ public class GameLoopManager : MonoBehaviour
     [Header("References")]
     [SerializeField] private AdSpawner adSpawner;
     [SerializeField] private ShopManager shopManager;
+
+    [Header("Buttons")]
+    [SerializeField] private Button loginStartButton;
     [SerializeField] private Button playButton;
 
     [Header("UI")]
     [SerializeField] private TMP_Text timerText;
     [SerializeField] private TMP_Text dayText;
 
-    [Header("Optional")]
-    [SerializeField] private TMP_Text shiftText;
-
     public int CompletedShifts { get; private set; }
-    public int CurrentJulyDay => CompletedShifts + 1;
+
+    public int CurrentJulyDay =>
+        CompletedShifts + 1;
 
     private GameState currentState;
     private float timeRemaining;
 
-    private void Start()
+    private void Awake()
     {
-        if (playButton != null)
+        if (loginStartButton != null)
         {
-            playButton.onClick.AddListener(StartNextShift);
+            loginStartButton.onClick.AddListener(
+                StartTutorial
+            );
         }
 
-        OpenInitialShop();
+        if (playButton != null)
+        {
+            playButton.onClick.AddListener(
+                StartNextShift
+            );
+        }
+    }
+
+    private void Start()
+    {
+        OpenLoginScreen();
     }
 
     private void Update()
@@ -61,27 +79,96 @@ public class GameLoopManager : MonoBehaviour
         UpdateShiftTimer();
     }
 
+    private void OpenLoginScreen()
+    {
+        currentState = GameState.Login;
+        CompletedShifts = 0;
+
+        StopAdGameplay();
+
+        SetObjectActive(loginObject, true);
+        SetObjectActive(tutorialObject, false);
+        SetObjectActive(minigameObject, false);
+        SetObjectActive(shopObject, false);
+        SetObjectActive(gameOverObject, false);
+
+        SetLoginButtonActive(true);
+        SetPlayButtonActive(false);
+
+        UpdateDayText();
+        UpdateTimerText(shiftDuration);
+    }
+
+    public void StartTutorial()
+    {
+        if (currentState != GameState.Login)
+        {
+            return;
+        }
+
+        currentState = GameState.Tutorial;
+
+        SetObjectActive(loginObject, false);
+        SetObjectActive(tutorialObject, true);
+        SetObjectActive(minigameObject, false);
+        SetObjectActive(shopObject, false);
+        SetObjectActive(gameOverObject, false);
+
+        SetLoginButtonActive(false);
+        SetPlayButtonActive(false);
+
+        StopAdGameplay();
+    }
+
+    /// <summary>
+    /// Call this when the tutorial has finished.
+    /// For now, you can connect a temporary tutorial button to this method.
+    /// </summary>
+    public void CompleteTutorial()
+    {
+        if (currentState != GameState.Tutorial)
+        {
+            return;
+        }
+
+        SetObjectActive(tutorialObject, false);
+
+        OpenInitialShop();
+    }
+
     private void OpenInitialShop()
     {
         CompletedShifts = 0;
+        currentState = GameState.Shop;
 
+        SetObjectActive(loginObject, false);
+        SetObjectActive(tutorialObject, false);
         SetObjectActive(minigameObject, false);
         SetObjectActive(shopObject, true);
         SetObjectActive(gameOverObject, false);
 
-        shopManager.RefreshShop();
+        if (shopManager != null)
+        {
+            shopManager.RefreshShop();
+        }
+        else
+        {
+            Debug.LogWarning(
+                "GameLoopManager has no ShopManager assigned.",
+                this
+            );
+        }
+
+        SetLoginButtonActive(false);
         SetPlayButtonActive(true);
 
-        currentState = GameState.Shop;
-
         UpdateDayText();
-        UpdateShiftText();
         UpdateTimerText(shiftDuration);
     }
 
     public void StartNextShift()
     {
-        if (currentState == GameState.Minigame)
+        if (currentState != GameState.Shop)
         {
             return;
         }
@@ -95,14 +182,16 @@ public class GameLoopManager : MonoBehaviour
         currentState = GameState.Minigame;
         timeRemaining = shiftDuration;
 
+        SetObjectActive(loginObject, false);
+        SetObjectActive(tutorialObject, false);
         SetObjectActive(shopObject, false);
         SetObjectActive(minigameObject, true);
         SetObjectActive(gameOverObject, false);
 
+        SetLoginButtonActive(false);
         SetPlayButtonActive(false);
 
         UpdateDayText();
-        UpdateShiftText();
         UpdateTimerText(timeRemaining);
 
         if (adSpawner != null)
@@ -136,11 +225,7 @@ public class GameLoopManager : MonoBehaviour
             return;
         }
 
-        if (adSpawner != null)
-        {
-            adSpawner.StopSpawning();
-            adSpawner.CloseAllAds();
-        }
+        StopAdGameplay();
 
         CompletedShifts++;
 
@@ -159,30 +244,44 @@ public class GameLoopManager : MonoBehaviour
     {
         currentState = GameState.Shop;
 
+        SetObjectActive(loginObject, false);
+        SetObjectActive(tutorialObject, false);
+        SetObjectActive(minigameObject, false);
         SetObjectActive(shopObject, true);
         SetObjectActive(gameOverObject, false);
 
-        shopManager.RefreshShop();
+        if (shopManager != null)
+        {
+            shopManager.RefreshShop();
+        }
+        else
+        {
+            Debug.LogWarning(
+                "GameLoopManager has no ShopManager assigned.",
+                this
+            );
+        }
+
+        SetLoginButtonActive(false);
         SetPlayButtonActive(true);
 
         UpdateDayText();
-        UpdateShiftText();
+        UpdateTimerText(shiftDuration);
     }
 
     private void EndGame()
     {
         currentState = GameState.GameOver;
 
-        if (adSpawner != null)
-        {
-            adSpawner.StopSpawning();
-            adSpawner.CloseAllAds();
-        }
+        StopAdGameplay();
 
+        SetObjectActive(loginObject, false);
+        SetObjectActive(tutorialObject, false);
         SetObjectActive(minigameObject, false);
         SetObjectActive(shopObject, false);
         SetObjectActive(gameOverObject, true);
 
+        SetLoginButtonActive(false);
         SetPlayButtonActive(false);
 
         if (dayText != null)
@@ -190,12 +289,18 @@ public class GameLoopManager : MonoBehaviour
             dayText.text = "AUGUST 1";
         }
 
-        if (shiftText != null)
+        UpdateTimerText(0f);
+    }
+
+    private void StopAdGameplay()
+    {
+        if (adSpawner == null)
         {
-            shiftText.text = "MONTH COMPLETE";
+            return;
         }
 
-        UpdateTimerText(0f);
+        adSpawner.StopSpawning();
+        adSpawner.CloseAllAds();
     }
 
     private void UpdateTimerText(float seconds)
@@ -206,7 +311,9 @@ public class GameLoopManager : MonoBehaviour
         }
 
         int displayedSeconds =
-            Mathf.CeilToInt(Mathf.Max(0f, seconds));
+            Mathf.CeilToInt(
+                Mathf.Max(0f, seconds)
+            );
 
         int minutes =
             displayedSeconds / 60;
@@ -229,31 +336,25 @@ public class GameLoopManager : MonoBehaviour
             $"JULY {CurrentJulyDay}";
     }
 
-    private void UpdateShiftText()
+    private void SetLoginButtonActive(bool isActive)
     {
-        if (shiftText == null)
+        if (loginStartButton == null)
         {
             return;
         }
 
-        int displayedShift =
-            Mathf.Clamp(
-                CompletedShifts + 1,
-                1,
-                totalShifts
-            );
-
-        shiftText.text =
-            $"SHIFT {displayedShift}/{totalShifts}";
+        loginStartButton.interactable = isActive;
     }
 
     private void SetPlayButtonActive(bool isActive)
     {
-        if (playButton != null)
+        if (playButton == null)
         {
-            playButton.gameObject.SetActive(isActive);
-            playButton.interactable = isActive;
+            return;
         }
+
+        playButton.gameObject.SetActive(isActive);
+        playButton.interactable = isActive;
     }
 
     private static void SetObjectActive(
@@ -269,6 +370,13 @@ public class GameLoopManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (loginStartButton != null)
+        {
+            loginStartButton.onClick.RemoveListener(
+                StartTutorial
+            );
+        }
+
         if (playButton != null)
         {
             playButton.onClick.RemoveListener(
