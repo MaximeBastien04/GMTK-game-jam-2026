@@ -18,6 +18,7 @@ public class AdSpawner : MonoBehaviour
     [SerializeField] private AdColorVariant[] adColorVariants;
 
     [Header("Spawn Interval")]
+    private Coroutine spawnRoutine;
     [SerializeField] private float minimumSpawnTime = 0.5f;
     [SerializeField] private float maximumSpawnTime = 3f;
 
@@ -69,9 +70,53 @@ public class AdSpawner : MonoBehaviour
                 return;
             }
         }
-
-        StartCoroutine(SpawnAds());
     }
+
+    public void StartSpawning()
+    {
+        if (!enabled || spawnRoutine != null)
+        {
+            return;
+        }
+
+        spawnRoutine = StartCoroutine(SpawnAds());
+    }
+
+    public void StopSpawning()
+    {
+        if (spawnRoutine == null)
+        {
+            return;
+        }
+
+        StopCoroutine(spawnRoutine);
+        spawnRoutine = null;
+    }
+
+    public void CloseAllAds()
+    {
+        if (adContainer == null)
+        {
+            return;
+        }
+
+        Ad[] activeAds =
+            adContainer.GetComponentsInChildren<Ad>(true);
+
+        foreach (Ad activeAd in activeAds)
+        {
+            if (activeAd != null)
+            {
+                Destroy(activeAd.gameObject);
+            }
+        }
+    }
+
+    private void OnDisable()
+    {
+        StopSpawning();
+    }
+
 
     private IEnumerator SpawnAds()
     {
@@ -119,73 +164,73 @@ public class AdSpawner : MonoBehaviour
     }
 
     private void ApplyRandomColor(GameObject newAd)
-{
-    if (adColorVariants == null ||
-        adColorVariants.Length == 0)
     {
-        return;
-    }
-
-    Image borderImage =
-        newAd.GetComponent<Image>();
-
-    if (borderImage == null)
-    {
-        Debug.LogWarning(
-            $"The spawned ad '{newAd.name}' has no Image on its root.",
-            newAd
-        );
-
-        return;
-    }
-
-    int randomIndex =
-        Random.Range(0, adColorVariants.Length);
-
-    AdColorVariant selectedVariant =
-        adColorVariants[randomIndex];
-
-    // Change the border sprite.
-    if (selectedVariant.borderSprite != null)
-    {
-        borderImage.sprite =
-            selectedVariant.borderSprite;
-    }
-
-    // Change the cross button sprite when this ad has one.
-    Transform closeButtonTransform =
-        newAd.transform.Find("CloseButton");
-
-    if (closeButtonTransform != null)
-    {
-        Image crossImage =
-            closeButtonTransform.GetComponent<Image>();
-
-        if (crossImage != null &&
-            selectedVariant.crossSprite != null)
+        if (adColorVariants == null ||
+            adColorVariants.Length == 0)
         {
-            crossImage.sprite =
-                selectedVariant.crossSprite;
+            return;
+        }
+
+        Image borderImage =
+            newAd.GetComponent<Image>();
+
+        if (borderImage == null)
+        {
+            Debug.LogWarning(
+                $"The spawned ad '{newAd.name}' has no Image on its root.",
+                newAd
+            );
+
+            return;
+        }
+
+        int randomIndex =
+            Random.Range(0, adColorVariants.Length);
+
+        AdColorVariant selectedVariant =
+            adColorVariants[randomIndex];
+
+        // Change the border sprite.
+        if (selectedVariant.borderSprite != null)
+        {
+            borderImage.sprite =
+                selectedVariant.borderSprite;
+        }
+
+        // Change the cross button sprite when this ad has one.
+        Transform closeButtonTransform =
+            newAd.transform.Find("CloseButton");
+
+        if (closeButtonTransform != null)
+        {
+            Image crossImage =
+                closeButtonTransform.GetComponent<Image>();
+
+            if (crossImage != null &&
+                selectedVariant.crossSprite != null)
+            {
+                crossImage.sprite =
+                    selectedVariant.crossSprite;
+            }
+        }
+
+        // Change the inside button sprite when this ad has one.
+        Transform insideButtonTransform =
+            newAd.transform.Find("InsideButton");
+
+        if (insideButtonTransform != null)
+        {
+            Image insideButtonImage =
+                insideButtonTransform.GetComponent<Image>();
+
+            if (insideButtonImage != null &&
+                selectedVariant.insideButtonSprite != null)
+            {
+                insideButtonImage.sprite =
+                    selectedVariant.insideButtonSprite;
+            }
         }
     }
-
-    // Change the inside button sprite when this ad has one.
-    Transform insideButtonTransform =
-        newAd.transform.Find("InsideButton");
-
-    if (insideButtonTransform != null)
-    {
-        Image insideButtonImage =
-            insideButtonTransform.GetComponent<Image>();
-
-        if (insideButtonImage != null &&
-            selectedVariant.insideButtonSprite != null)
-        {
-            insideButtonImage.sprite =
-                selectedVariant.insideButtonSprite;
-        }
-    }
-}
     private void PositionAdInsideContainer(
         RectTransform adRect
     )
