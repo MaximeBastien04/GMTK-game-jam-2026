@@ -23,7 +23,9 @@ public class ShopItemPlacement : MonoBehaviour
     {
         if (selectionButton != null)
         {
-            selectionButton.onClick.AddListener(SelectThisItem);
+            selectionButton.onClick.AddListener(
+                SelectThisItem
+            );
         }
     }
 
@@ -38,18 +40,25 @@ public class ShopItemPlacement : MonoBehaviour
 
         if (itemNameText != null)
         {
-            itemNameText.text = ItemData.itemName;
+            itemNameText.text =
+                ItemData.itemName;
         }
 
         if (itemPriceText != null)
         {
-            itemPriceText.text = $"€ {ItemData.price}";
+            itemPriceText.text =
+                $"€ {ItemData.price}";
         }
 
         if (itemSprite != null)
         {
-            itemSprite.sprite = ItemData.sprite;
-            itemSprite.enabled = ItemData.sprite != null;
+            itemSprite.sprite =
+                ItemData.sprite;
+
+            itemSprite.enabled =
+                ItemData.sprite != null;
+
+            SetItemOpacity(1f);
         }
 
         if (selectionButton != null)
@@ -67,6 +76,9 @@ public class ShopItemPlacement : MonoBehaviour
     {
         IsPurchased = true;
 
+        // Hide the shop item without disabling its GameObject.
+        SetItemOpacity(0f);
+
         if (selectionButton != null)
         {
             selectionButton.interactable = false;
@@ -78,10 +90,25 @@ public class ShopItemPlacement : MonoBehaviour
         }
     }
 
+    private void SetItemOpacity(float opacity)
+    {
+        if (itemSprite == null)
+        {
+            return;
+        }
+
+        Color color = itemSprite.color;
+        color.a = opacity;
+        itemSprite.color = color;
+    }
+
     private void SelectThisItem()
     {
-        if (shopManager == null || ItemData == null)
+        if (shopManager == null ||
+            ItemData == null)
+        {
             return;
+        }
 
         shopManager.SelectItem(this);
     }
@@ -90,7 +117,9 @@ public class ShopItemPlacement : MonoBehaviour
     {
         if (selectionButton != null)
         {
-            selectionButton.onClick.RemoveListener(SelectThisItem);
+            selectionButton.onClick.RemoveListener(
+                SelectThisItem
+            );
         }
     }
 }

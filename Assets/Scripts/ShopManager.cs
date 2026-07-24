@@ -6,7 +6,8 @@ using UnityEngine.UI;
 public class ShopManager : MonoBehaviour
 {
     [Header("Available Items")]
-    [SerializeField] private List<ShopItemData> allItems =
+    [SerializeField]
+    private List<ShopItemData> allItems =
         new List<ShopItemData>();
 
     [Header("Shop Placements")]
@@ -15,12 +16,16 @@ public class ShopManager : MonoBehaviour
     [Header("Selected Item Display")]
     [SerializeField] private TMP_Text selectedItemNameText;
     [SerializeField] private TMP_Text selectedItemDescriptionText;
+    private string currentItemDescription;
 
     [Header("Buy Button")]
     [SerializeField] private Button buyButton;
     [SerializeField] private TMP_Text buyButtonText;
 
     private ShopItemPlacement selectedPlacement;
+
+    [Header("Inventory")]
+    [SerializeField] private InventoryManager inventoryManager;
 
     private void Start()
     {
@@ -104,10 +109,12 @@ public class ShopManager : MonoBehaviour
                 item.itemName;
         }
 
+        currentItemDescription = item.description;
+
         if (selectedItemDescriptionText != null)
         {
             selectedItemDescriptionText.text =
-                item.description;
+                currentItemDescription;
         }
 
         UpdateBuyButton();
@@ -136,17 +143,58 @@ public class ShopManager : MonoBehaviour
             return;
         }
 
+        if (inventoryManager == null)
+        {
+            Debug.LogError(
+                "ShopManager has no InventoryManager assigned.",
+                this
+            );
+
+            return;
+        }
+
+        if (!inventoryManager.HasAvailableSlot)
+        {
+            ShowShopMessage("Your inventory is full.");
+            return;
+        }
+
         ShopItemData selectedItem =
             selectedPlacement.ItemData;
+
+        if (!ScoreManager.Instance.CanAfford(selectedItem.price))
+        {
+            ShowShopMessage("You don't have enough money.");
+            return;
+        }
+
+        /*
+         * Add the item before spending money.
+         * This prevents money from being removed if adding fails.
+         */
+        bool itemAdded =
+            inventoryManager.TryAddItem(selectedItem);
+
+        if (!itemAdded)
+        {
+            Debug.Log("Could not add item to inventory.");
+            return;
+        }
 
         bool purchaseSuccessful =
             ScoreManager.Instance.TrySpendScore(
                 selectedItem.price
             );
+            
+        ShowDescription();
 
         if (!purchaseSuccessful)
         {
-            // Show that player cannot afford the item.
+            Debug.LogError(
+                "The item was added, but payment failed.",
+                this
+            );
+
             return;
         }
 
@@ -183,7 +231,9 @@ public class ShopManager : MonoBehaviour
     private void UpdateBuyButton()
     {
         if (buyButton == null)
+        {
             return;
+        }
 
         if (selectedPlacement == null ||
             selectedPlacement.ItemData == null)
@@ -210,13 +260,30 @@ public class ShopManager : MonoBehaviour
             return;
         }
 
-        bool canAfford =
-            ScoreManager.Instance != null &&
-            ScoreManager.Instance.CanAfford(
-                selectedPlacement.ItemData.price
-            );
+        // An unpurchased item is selected, so the button is clickable.
+        buyButton.interactable = true;
 
-        buyButton.interactable = canAfford;
+        if (buyButtonText != null)
+        {
+            buyButtonText.text = "BUY";
+        }
+    }
+
+    private void ShowDescription()
+    {
+        if (selectedItemDescriptionText != null)
+        {
+            selectedItemDescriptionText.text =
+                currentItemDescription;
+        }
+    }
+
+    private void ShowShopMessage(string message)
+    {
+        if (selectedItemDescriptionText != null)
+        {
+            selectedItemDescriptionText.text = message;
+        }
     }
 
     private void OnDestroy()
