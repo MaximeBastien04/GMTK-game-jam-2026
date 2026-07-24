@@ -25,6 +25,7 @@ public class GameLoopManager : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private AdSpawner adSpawner;
+    [SerializeField] private ShopManager shopManager;
     [SerializeField] private Button playButton;
 
     [Header("UI")]
@@ -68,6 +69,7 @@ public class GameLoopManager : MonoBehaviour
         SetObjectActive(shopObject, true);
         SetObjectActive(gameOverObject, false);
 
+        shopManager.RefreshShop();
         SetPlayButtonActive(true);
 
         currentState = GameState.Shop;
@@ -160,6 +162,7 @@ public class GameLoopManager : MonoBehaviour
         SetObjectActive(shopObject, true);
         SetObjectActive(gameOverObject, false);
 
+        shopManager.RefreshShop();
         SetPlayButtonActive(true);
 
         UpdateDayText();

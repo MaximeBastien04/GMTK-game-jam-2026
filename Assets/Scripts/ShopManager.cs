@@ -27,27 +27,59 @@ public class ShopManager : MonoBehaviour
     [Header("Inventory")]
     [SerializeField] private InventoryManager inventoryManager;
 
-    private void Start()
+    private void Awake()
     {
         if (buyButton != null)
         {
             buyButton.onClick.AddListener(BuySelectedItem);
         }
+    }
 
+    private void Start()
+    {
         if (ScoreManager.Instance != null)
         {
             ScoreManager.Instance.ScoreChanged += HandleMoneyChanged;
         }
+    }
+
+    public void RefreshShop()
+    {
+        selectedPlacement = null;
+        currentItemDescription = string.Empty;
 
         GenerateShop();
     }
 
     private void GenerateShop()
     {
+        if (allItems == null ||
+            allItems.Count == 0)
+        {
+            Debug.LogError(
+                "ShopManager has no items assigned to All Items.",
+                this
+            );
+
+            return;
+        }
+
+        if (itemPlacements == null ||
+            itemPlacements.Length == 0)
+        {
+            Debug.LogError(
+                "ShopManager has no Item Placements assigned.",
+                this
+            );
+
+            return;
+        }
+
         if (allItems.Count < itemPlacements.Length)
         {
             Debug.LogError(
-                "There are not enough shop items for all item placements.",
+                $"ShopManager needs at least {itemPlacements.Length} items, " +
+                $"but only {allItems.Count} are assigned.",
                 this
             );
 
@@ -55,12 +87,32 @@ public class ShopManager : MonoBehaviour
         }
 
         List<ShopItemData> availableItems =
-            new List<ShopItemData>(allItems);
+            new List<ShopItemData>();
 
-        // Shuffle the item list.
+        // Ignore empty item entries.
+        foreach (ShopItemData item in allItems)
+        {
+            if (item != null)
+            {
+                availableItems.Add(item);
+            }
+        }
+
+        if (availableItems.Count < itemPlacements.Length)
+        {
+            Debug.LogError(
+                "Not enough valid ShopItemData assets are assigned.",
+                this
+            );
+
+            return;
+        }
+
+        // Shuffle the available items.
         for (int i = availableItems.Count - 1; i > 0; i--)
         {
-            int randomIndex = Random.Range(0, i + 1);
+            int randomIndex =
+                Random.Range(0, i + 1);
 
             ShopItemData temporaryItem =
                 availableItems[i];
@@ -72,9 +124,19 @@ public class ShopManager : MonoBehaviour
                 temporaryItem;
         }
 
-        // Assign the first three shuffled items.
+        // Reset and populate every shop placement.
         for (int i = 0; i < itemPlacements.Length; i++)
         {
+            if (itemPlacements[i] == null)
+            {
+                Debug.LogError(
+                    $"Item Placement element {i} is not assigned.",
+                    this
+                );
+
+                continue;
+            }
+
             itemPlacements[i].Initialize(
                 availableItems[i],
                 this
@@ -82,7 +144,7 @@ public class ShopManager : MonoBehaviour
         }
 
         // Automatically select the first item.
-        if (itemPlacements.Length > 0)
+        if (itemPlacements[0] != null)
         {
             SelectItem(itemPlacements[0]);
         }
@@ -185,7 +247,7 @@ public class ShopManager : MonoBehaviour
             ScoreManager.Instance.TrySpendScore(
                 selectedItem.price
             );
-            
+
         ShowDescription();
 
         if (!purchaseSuccessful)
