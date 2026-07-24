@@ -6,7 +6,8 @@ using UnityEngine.UI;
 public class ShopManager : MonoBehaviour
 {
     [Header("Available Items")]
-    [SerializeField] private List<ShopItemData> allItems =
+    [SerializeField]
+    private List<ShopItemData> allItems =
         new List<ShopItemData>();
 
     [Header("Shop Placements")]
@@ -15,6 +16,7 @@ public class ShopManager : MonoBehaviour
     [Header("Selected Item Display")]
     [SerializeField] private TMP_Text selectedItemNameText;
     [SerializeField] private TMP_Text selectedItemDescriptionText;
+    private string currentItemDescription;
 
     [Header("Buy Button")]
     [SerializeField] private Button buyButton;
@@ -22,27 +24,62 @@ public class ShopManager : MonoBehaviour
 
     private ShopItemPlacement selectedPlacement;
 
-    private void Start()
+    [Header("Inventory")]
+    [SerializeField] private InventoryManager inventoryManager;
+
+    private void Awake()
     {
         if (buyButton != null)
         {
             buyButton.onClick.AddListener(BuySelectedItem);
         }
+    }
 
+    private void Start()
+    {
         if (ScoreManager.Instance != null)
         {
             ScoreManager.Instance.ScoreChanged += HandleMoneyChanged;
         }
+    }
+
+    public void RefreshShop()
+    {
+        selectedPlacement = null;
+        currentItemDescription = string.Empty;
 
         GenerateShop();
     }
 
     private void GenerateShop()
     {
+        if (allItems == null ||
+            allItems.Count == 0)
+        {
+            Debug.LogError(
+                "ShopManager has no items assigned to All Items.",
+                this
+            );
+
+            return;
+        }
+
+        if (itemPlacements == null ||
+            itemPlacements.Length == 0)
+        {
+            Debug.LogError(
+                "ShopManager has no Item Placements assigned.",
+                this
+            );
+
+            return;
+        }
+
         if (allItems.Count < itemPlacements.Length)
         {
             Debug.LogError(
-                "There are not enough shop items for all item placements.",
+                $"ShopManager needs at least {itemPlacements.Length} items, " +
+                $"but only {allItems.Count} are assigned.",
                 this
             );
 
@@ -50,12 +87,32 @@ public class ShopManager : MonoBehaviour
         }
 
         List<ShopItemData> availableItems =
-            new List<ShopItemData>(allItems);
+            new List<ShopItemData>();
 
-        // Shuffle the item list.
+        // Ignore empty item entries.
+        foreach (ShopItemData item in allItems)
+        {
+            if (item != null)
+            {
+                availableItems.Add(item);
+            }
+        }
+
+        if (availableItems.Count < itemPlacements.Length)
+        {
+            Debug.LogError(
+                "Not enough valid ShopItemData assets are assigned.",
+                this
+            );
+
+            return;
+        }
+
+        // Shuffle the available items.
         for (int i = availableItems.Count - 1; i > 0; i--)
         {
-            int randomIndex = Random.Range(0, i + 1);
+            int randomIndex =
+                Random.Range(0, i + 1);
 
             ShopItemData temporaryItem =
                 availableItems[i];
@@ -67,9 +124,19 @@ public class ShopManager : MonoBehaviour
                 temporaryItem;
         }
 
-        // Assign the first three shuffled items.
+        // Reset and populate every shop placement.
         for (int i = 0; i < itemPlacements.Length; i++)
         {
+            if (itemPlacements[i] == null)
+            {
+                Debug.LogError(
+                    $"Item Placement element {i} is not assigned.",
+                    this
+                );
+
+                continue;
+            }
+
             itemPlacements[i].Initialize(
                 availableItems[i],
                 this
@@ -77,7 +144,7 @@ public class ShopManager : MonoBehaviour
         }
 
         // Automatically select the first item.
-        if (itemPlacements.Length > 0)
+        if (itemPlacements[0] != null)
         {
             SelectItem(itemPlacements[0]);
         }
@@ -104,10 +171,12 @@ public class ShopManager : MonoBehaviour
                 item.itemName;
         }
 
+        currentItemDescription = item.description;
+
         if (selectedItemDescriptionText != null)
         {
             selectedItemDescriptionText.text =
-                item.description;
+                currentItemDescription;
         }
 
         UpdateBuyButton();
@@ -136,17 +205,58 @@ public class ShopManager : MonoBehaviour
             return;
         }
 
+        if (inventoryManager == null)
+        {
+            Debug.LogError(
+                "ShopManager has no InventoryManager assigned.",
+                this
+            );
+
+            return;
+        }
+
+        if (!inventoryManager.HasAvailableSlot)
+        {
+            ShowShopMessage("Your inventory is full.");
+            return;
+        }
+
         ShopItemData selectedItem =
             selectedPlacement.ItemData;
+
+        if (!ScoreManager.Instance.CanAfford(selectedItem.price))
+        {
+            ShowShopMessage("You don't have enough money.");
+            return;
+        }
+
+        /*
+         * Add the item before spending money.
+         * This prevents money from being removed if adding fails.
+         */
+        bool itemAdded =
+            inventoryManager.TryAddItem(selectedItem);
+
+        if (!itemAdded)
+        {
+            Debug.Log("Could not add item to inventory.");
+            return;
+        }
 
         bool purchaseSuccessful =
             ScoreManager.Instance.TrySpendScore(
                 selectedItem.price
             );
 
+        ShowDescription();
+
         if (!purchaseSuccessful)
         {
-            // Show that player cannot afford the item.
+            Debug.LogError(
+                "The item was added, but payment failed.",
+                this
+            );
+
             return;
         }
 
@@ -183,7 +293,9 @@ public class ShopManager : MonoBehaviour
     private void UpdateBuyButton()
     {
         if (buyButton == null)
+        {
             return;
+        }
 
         if (selectedPlacement == null ||
             selectedPlacement.ItemData == null)
@@ -210,13 +322,30 @@ public class ShopManager : MonoBehaviour
             return;
         }
 
-        bool canAfford =
-            ScoreManager.Instance != null &&
-            ScoreManager.Instance.CanAfford(
-                selectedPlacement.ItemData.price
-            );
+        // An unpurchased item is selected, so the button is clickable.
+        buyButton.interactable = true;
 
-        buyButton.interactable = canAfford;
+        if (buyButtonText != null)
+        {
+            buyButtonText.text = "BUY";
+        }
+    }
+
+    private void ShowDescription()
+    {
+        if (selectedItemDescriptionText != null)
+        {
+            selectedItemDescriptionText.text =
+                currentItemDescription;
+        }
+    }
+
+    private void ShowShopMessage(string message)
+    {
+        if (selectedItemDescriptionText != null)
+        {
+            selectedItemDescriptionText.text = message;
+        }
     }
 
     private void OnDestroy()
