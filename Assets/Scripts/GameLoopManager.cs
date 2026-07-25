@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -31,6 +32,7 @@ public class GameLoopManager : MonoBehaviour
     [SerializeField] private AdSpawner adSpawner;
     [SerializeField] private ShopManager shopManager;
     [SerializeField] private TutorialManager tutorialManager;
+    [SerializeField] private CalendarManager calendarManager;
 
     [Header("Buttons")]
     [SerializeField] private Button loginStartButton;
@@ -50,10 +52,13 @@ public class GameLoopManager : MonoBehaviour
     public int CompletedShifts { get; private set; }
 
     public int CurrentJulyDay =>
-        CompletedShifts + 1;
+        calendarManager != null
+            ? calendarManager.CurrentDate.Day
+            : CompletedShifts + 1;
 
     private GameState currentState;
     private float timeRemaining;
+    private bool isStartingShift;
 
     public bool IsMinigameActive => currentState == GameState.Minigame;
 
@@ -207,17 +212,65 @@ public class GameLoopManager : MonoBehaviour
 
     public void StartNextShift()
     {
-        if (currentState != GameState.Shop)
+        if (currentState != GameState.Shop ||
+            isStartingShift)
         {
             return;
         }
 
-        if (CompletedShifts >= totalShifts)
+        StartCoroutine(
+            StartNextShiftRoutine()
+        );
+    }
+
+    private IEnumerator StartNextShiftRoutine()
+    {
+        isStartingShift = true;
+        SetPlayButtonActive(false);
+
+        /*
+         * The initial Play press starts July 1.
+         * Every later Play press first changes the calendar,
+         * then begins the next shift.
+         */
+        if (CompletedShifts > 0 &&
+            calendarManager != null)
         {
+            /*
+             * Advance the gameplay date immediately, then run the
+             * calendar page animations independently. The minigame
+             * does not wait for Friday/weekend page animations.
+             */
+            StartCoroutine(
+                calendarManager.AdvanceToNextWorkday()
+            );
+        }
+
+        if (calendarManager != null &&
+            calendarManager.IsFinalDay &&
+            CompletedShifts > 0)
+        {
+            /*
+             * July 31 is still playable. This guard only prevents
+             * attempting to start a shift after the final date.
+             */
+        }
+        else if (calendarManager == null &&
+                 CompletedShifts >= totalShifts)
+        {
+            isStartingShift = false;
             EndGame();
-            return;
+            yield break;
         }
 
+        BeginShiftGameplay();
+        isStartingShift = false;
+
+        yield break;
+    }
+
+    private void BeginShiftGameplay()
+    {
         if (ItemEffectManager.Instance != null)
         {
             ItemEffectManager.Instance.ResetShiftEffects();
@@ -278,7 +331,16 @@ public class GameLoopManager : MonoBehaviour
 
         SetObjectActive(minigameObject, false);
 
-        if (CompletedShifts >= totalShifts)
+        bool reachedFinalDay =
+            calendarManager != null &&
+            calendarManager.IsFinalDay;
+
+        bool reachedFallbackShiftLimit =
+            calendarManager == null &&
+            CompletedShifts >= totalShifts;
+
+        if (reachedFinalDay ||
+            reachedFallbackShiftLimit)
         {
             EndGame();
             return;
