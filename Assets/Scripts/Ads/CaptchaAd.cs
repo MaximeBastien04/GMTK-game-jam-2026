@@ -57,6 +57,10 @@ public class CaptchaAd : Ad
     [Header("Fade Settings")]
     [SerializeField] private float fadeDuration = 0.1f;
 
+    [Header("Wrong Image Penalty")]
+    [Min(0)]
+    [SerializeField] private int wrongImagePenalty = 1;
+
     [Header("UI")]
     [SerializeField] private TMP_Text dispNameText;
 
@@ -245,6 +249,7 @@ public class CaptchaAd : Ad
 
         if (!correctSlots[slotIndex])
         {
+            ApplyWrongImagePenalty();
             return;
         }
 
@@ -268,6 +273,27 @@ public class CaptchaAd : Ad
                 CompleteCaptchaAfterFade()
             );
         }
+    }
+
+    private void ApplyWrongImagePenalty()
+    {
+        if (ScoreManager.Instance == null)
+        {
+            Debug.LogWarning(
+                $"{name}: No ScoreManager instance was found.",
+                this
+            );
+
+            return;
+        }
+
+        /*
+         * TrySpendScore prevents the player's money from
+         * dropping below zero. The CAPTCHA remains active.
+         */
+        ScoreManager.Instance.TrySpendScore(
+            wrongImagePenalty
+        );
     }
 
     private void CompleteCaptcha()
