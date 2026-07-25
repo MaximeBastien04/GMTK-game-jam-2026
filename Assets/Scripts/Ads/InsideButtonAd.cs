@@ -10,8 +10,15 @@ public class InsideButtonAd : Ad
 
     private RectTransform insideButtonRect;
 
+    [Header("Advertisement")]
+    [SerializeField] private Image adImage;
+
+    [SerializeField] private Sprite[] advertisementSprites;
+
     private void Awake()
     {
+        RandomizeAdvertisement();
+
         if (insideButton == null)
         {
             Debug.LogError(
@@ -52,6 +59,38 @@ public class InsideButtonAd : Ad
 
         insideButtonRect.anchoredPosition =
             newPosition;
+    }
+
+    private void RandomizeAdvertisement()
+    {
+        if (adImage == null)
+        {
+            Debug.LogWarning(
+                $"{name}: Ad Image is not assigned.",
+                this
+            );
+
+            return;
+        }
+
+        if (advertisementSprites == null ||
+            advertisementSprites.Length == 0)
+        {
+            Debug.LogWarning(
+                $"{name}: No advertisement sprites have been assigned.",
+                this
+            );
+
+            return;
+        }
+
+        adImage.sprite =
+            advertisementSprites[
+                Random.Range(
+                    0,
+                    advertisementSprites.Length
+                )
+            ];
     }
 
     private void OnDestroy()

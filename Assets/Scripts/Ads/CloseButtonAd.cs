@@ -13,31 +13,24 @@ public class CloseButtonAd : Ad
     [Min(0)]
     [SerializeField] private int insideButtonPenalty = 1;
 
+    [Header("Advertisement")]
+    [SerializeField] private Image adImage;
+
+    [SerializeField] private Sprite[] advertisementSprites;
+
     private void Awake()
     {
+        RandomizeAdvertisement();
+
         if (closeButton != null)
         {
             closeButton.onClick.AddListener(CloseAd);
-        }
-        else
-        {
-            Debug.LogWarning(
-                $"{name}: CloseButton is not assigned.",
-                this
-            );
         }
 
         if (insideButton != null)
         {
             insideButton.onClick.AddListener(
                 HandleInsideButtonClicked
-            );
-        }
-        else
-        {
-            Debug.LogWarning(
-                $"{name}: InsideButton is not assigned.",
-                this
             );
         }
     }
@@ -67,6 +60,38 @@ public class CloseButtonAd : Ad
          * This also lets the AdSpawner unregister it correctly.
          */
         ForceCloseWithoutReward();
+    }
+
+    private void RandomizeAdvertisement()
+    {
+        if (adImage == null)
+        {
+            Debug.LogWarning(
+                $"{name}: Ad Image is not assigned.",
+                this
+            );
+
+            return;
+        }
+
+        if (advertisementSprites == null ||
+            advertisementSprites.Length == 0)
+        {
+            Debug.LogWarning(
+                $"{name}: No advertisement sprites have been assigned.",
+                this
+            );
+
+            return;
+        }
+
+        adImage.sprite =
+            advertisementSprites[
+                Random.Range(
+                    0,
+                    advertisementSprites.Length
+                )
+            ];
     }
 
     private void OnDestroy()
