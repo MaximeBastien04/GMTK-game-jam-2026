@@ -20,8 +20,25 @@ public class MouseConstraint : MonoBehaviour
 
     private PointerEventData pointerEventData;
 
+    [Header("Click Sound")]
+    [SerializeField] private AudioClip mouseClickClip;
+
+    [Range(0f, 1f)]
+    [SerializeField] private float clickVolume = 1f;
+
+    [SerializeField]
+    private Vector2 clickPitchRange = new Vector2(0.95f, 1.05f);
+
+    private AudioSource audioSource;
+
     private void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+
+        audioSource.playOnAwake = false;
+        audioSource.loop = false;
+        audioSource.spatialBlend = 0f;
+
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
@@ -147,6 +164,8 @@ public class MouseConstraint : MonoBehaviour
     {
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
+            PlayClickSound();
+            
             if (currentHoveredObject != null)
             {
                 ExecuteEvents.Execute(
@@ -181,5 +200,23 @@ public class MouseConstraint : MonoBehaviour
         Cursor.visible = true;
         Cursor.lockState =
             CursorLockMode.None;
+    }
+
+    private void PlayClickSound()
+    {
+        if (mouseClickClip == null || audioSource == null)
+        {
+            return;
+        }
+
+        audioSource.pitch = Random.Range(
+            clickPitchRange.x,
+            clickPitchRange.y
+        );
+
+        audioSource.PlayOneShot(
+            mouseClickClip,
+            clickVolume
+        );
     }
 }
