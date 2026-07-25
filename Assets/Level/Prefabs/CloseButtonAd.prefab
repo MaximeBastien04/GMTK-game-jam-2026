@@ -170,6 +170,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CloseButtonAd
   closeButton: {fileID: 8442863984783737887}
   insideButton: {fileID: 4398221531163063852}
+  insideButtonImage: {fileID: 2224761446701327028}
   insideButtonPenalty: 1
   adImage: {fileID: 4539107384476121723}
   advertisementSprites:

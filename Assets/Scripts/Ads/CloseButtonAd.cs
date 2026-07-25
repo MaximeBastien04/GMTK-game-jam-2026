@@ -8,6 +8,7 @@ public class CloseButtonAd : Ad
     [Header("Buttons")]
     [SerializeField] private Button closeButton;
     [SerializeField] private Button insideButton;
+    [SerializeField] private Image insideButtonImage;
 
     [Header("Inside Button Penalty")]
     [Min(0)]
@@ -108,6 +109,29 @@ public class CloseButtonAd : Ad
             insideButton.onClick.RemoveListener(
                 HandleInsideButtonClicked
             );
+        }
+    }
+
+    public void ApplyInsideButtonSprite(Sprite sprite)
+    {
+        if (sprite == null)
+        {
+            return;
+        }
+
+        /*
+         * The Button and InsideButtonImage use two different
+         * Image components, so both need the selected color sprite.
+         */
+        if (insideButton != null &&
+            insideButton.image != null)
+        {
+            insideButton.image.sprite = sprite;
+        }
+
+        if (insideButtonImage != null)
+        {
+            insideButtonImage.sprite = sprite;
         }
     }
 }

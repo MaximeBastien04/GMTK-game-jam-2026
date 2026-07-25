@@ -7109,7 +7109,7 @@ MonoBehaviour:
   dayText: {fileID: 653638280}
   timerFlickerThreshold: 3.5
   timerFlickerSpeed: 2
-  skipTutorial: 0
+  skipTutorial: 1
 --- !u!4 &1195852723
 Transform:
   m_ObjectHideFlags: 0
@@ -7551,7 +7551,7 @@ AudioSource:
   m_Volume: 0.25
   m_Pitch: 1
   Loop: 1
-  Mute: 0
+  Mute: 1
   Spatialize: 0
   SpatializePostEffects: 0
   Priority: 128
@@ -9580,7 +9580,6 @@ MonoBehaviour:
   daveSpeechText: {fileID: 943486469}
   confirmButton: {fileID: 1197252152}
   playButton: {fileID: 753577067}
-  playButtonDisabledSprite: {fileID: 21300000, guid: 5c971f0251b7d5246bf273e6679479a2, type: 3}
   playButtonImage: {fileID: 753577068}
   shopObject: {fileID: 1452295140}
   shopButton: {fileID: 1822360855}
