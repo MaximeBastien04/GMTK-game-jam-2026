@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class CalendarManager : MonoBehaviour
 {
     [Header("Calendar Paper")]
@@ -50,6 +51,27 @@ public class CalendarManager : MonoBehaviour
         );
 
     private CalendarPaper currentPaper;
+
+
+    [Header("Calendar Tear Sound")]
+    [SerializeField] private AudioClip paperRipClip;
+
+    [Range(0f, 1f)]
+    [SerializeField] private float paperRipVolume = 1f;
+
+    [SerializeField]
+    private Vector2 paperRipPitchRange =
+        new Vector2(0.95f, 1.05f);
+
+    private AudioSource audioSource;
+
+    private void Awake()
+    {
+        audioSource = GetComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+        audioSource.loop = false;
+        audioSource.spatialBlend = 0f;
+    }
 
     private void Start()
     {
@@ -133,6 +155,8 @@ public class CalendarManager : MonoBehaviour
 
         currentPaper =
             nextPaper;
+
+        PlayPaperRipSound();
 
         /*
          * Start the old paper's tear animation independently so the
@@ -275,5 +299,37 @@ public class CalendarManager : MonoBehaviour
     {
         return date.DayOfWeek == DayOfWeek.Saturday ||
                date.DayOfWeek == DayOfWeek.Sunday;
+    }
+
+
+    private void PlayPaperRipSound()
+    {
+        if (paperRipClip == null || audioSource == null)
+        {
+            return;
+        }
+
+        float minimumPitch =
+            Mathf.Min(
+                paperRipPitchRange.x,
+                paperRipPitchRange.y
+            );
+
+        float maximumPitch =
+            Mathf.Max(
+                paperRipPitchRange.x,
+                paperRipPitchRange.y
+            );
+
+        audioSource.pitch =
+            UnityEngine.Random.Range(
+                minimumPitch,
+                maximumPitch
+            );
+
+        audioSource.PlayOneShot(
+            paperRipClip,
+            paperRipVolume
+        );
     }
 }

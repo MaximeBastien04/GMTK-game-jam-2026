@@ -18,15 +18,30 @@ public class AdSpawner : MonoBehaviour
     [SerializeField] private RectTransform adContainer;
     [SerializeField] private AdColorVariant[] adColorVariants;
 
+
     [Header("Spawn Interval")]
     private Coroutine spawnRoutine;
     [SerializeField] private float minimumSpawnTime = 0.5f;
     [SerializeField] private float maximumSpawnTime = 3f;
 
+
+    [Header("Ad Spawn Sound")]
+    [SerializeField] private AudioClip adSpawnClip;
+
+    [Range(0f, 1f)]
+    [SerializeField] private float volume = 1f;
+    [SerializeField] private Vector2 pitchRange = new Vector2(0.9f, 1.1f);
+
+    private AudioSource audioSource;
+
     private readonly List<Ad> spawnedAds = new List<Ad>();
+
 
     private void Start()
     {
+
+        audioSource = GetComponent<AudioSource>();
+
         if (adContainer == null)
         {
             Debug.LogError(
@@ -173,6 +188,8 @@ public class AdSpawner : MonoBehaviour
         {
             ItemEffectManager.Instance.ApplyActiveEffects(newAd);
         }
+
+        PlaySpawnSound();
     }
 
     private void ApplyRandomColor(GameObject newAd)
@@ -366,6 +383,24 @@ public class AdSpawner : MonoBehaviour
     {
         spawnedAds.RemoveAll(
             ad => ad == null || ad.HasBeenClosed
+        );
+    }
+
+    public void PlaySpawnSound()
+    {
+        if (adSpawnClip == null)
+        {
+            return;
+        }
+
+        audioSource.pitch = Random.Range(
+            pitchRange.x,
+            pitchRange.y
+        );
+
+        audioSource.PlayOneShot(
+            adSpawnClip,
+            volume
         );
     }
 }
