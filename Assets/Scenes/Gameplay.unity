@@ -7331,9 +7331,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BackgroundMusicManager
   backgroundMusic: {fileID: 8300000, guid: b2d7bb46243e963408e400f32d5adcd4, type: 3}
-  targetVolume: 0.6
+  targetVolume: 0.25
   fadeInDuration: 0.75
-  persistBetweenScenes: 1
 --- !u!82 &1339278132
 AudioSource:
   m_ObjectHideFlags: 0
@@ -7347,9 +7346,9 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.25
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
