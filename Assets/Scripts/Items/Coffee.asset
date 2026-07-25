@@ -16,3 +16,4 @@ MonoBehaviour:
   description: Adds 30 seconds to the day
   price: 35
   sprite: {fileID: 21300000, guid: 1a978b1ce5c354b438fd68690c0878af, type: 3}
+  itemType: 3

@@ -7,10 +7,8 @@ public class InventoryManager : MonoBehaviour
     public static InventoryManager Instance { get; private set; }
 
     [Header("Inventory Slots")]
-    [Tooltip(
-        "Assign the Item Image from each of the four ItemHolder objects."
-    )]
     [SerializeField] private Image[] inventoryItemImages;
+    [SerializeField] private Button[] inventoryItemButtons;
 
     public int Capacity => inventoryItemImages.Length;
     public int ItemCount { get; private set; }
@@ -36,6 +34,7 @@ public class InventoryManager : MonoBehaviour
             new ShopItemData[inventoryItemImages.Length];
 
         InitializeSlots();
+        RegisterButtonListeners();
     }
 
     private void InitializeSlots()
@@ -57,6 +56,13 @@ public class InventoryManager : MonoBehaviour
             itemImage.sprite = null;
             SetImageOpacity(itemImage, 0f);
             itemImage.raycastTarget = false;
+
+            if (inventoryItemButtons != null &&
+                i < inventoryItemButtons.Length &&
+                inventoryItemButtons[i] != null)
+            {
+                inventoryItemButtons[i].interactable = false;
+            }
         }
 
         ItemCount = 0;
@@ -87,6 +93,11 @@ public class InventoryManager : MonoBehaviour
                 SetImageOpacity(itemImage, 1f);
             }
 
+            if (inventoryItemButtons != null && i < inventoryItemButtons.Length && inventoryItemButtons[i] != null)
+            {
+                inventoryItemButtons[i].interactable = true;
+            }
+
             ItemCount++;
 
             Debug.Log(
@@ -100,12 +111,12 @@ public class InventoryManager : MonoBehaviour
         return false;
     }
 
-    public void UseItem(int slotIndex)
+    public bool UseItem(int slotIndex)
     {
         if (slotIndex < 0 ||
             slotIndex >= inventoryItems.Length)
         {
-            return;
+            return false;
         }
 
         ShopItemData item =
@@ -113,16 +124,64 @@ public class InventoryManager : MonoBehaviour
 
         if (item == null)
         {
-            return;
+            return false;
         }
 
+        if (ItemEffectManager.Instance == null)
+        {
+            Debug.LogError(
+                "No ItemEffectManager instance was found.",
+                this
+            );
+
+            return false;
+        }
+
+        bool itemUsed =
+            ItemEffectManager.Instance.TryUseItem(item);
+
+        if (!itemUsed)
+        {
+            return false;
+        }
+
+        // This still allows the tutorial to detect magnifier usage.
         ItemUsed?.Invoke(item);
 
-        /*
-         * For now the item remains in the inventory.
-         * Later, you can consume it here if items
-         * should only be usable once.
-         */
+        RemoveItemFromSlot(slotIndex);
+
+        return true;
+    }
+
+    private void RemoveItemFromSlot(int slotIndex)
+    {
+        inventoryItems[slotIndex] = null;
+
+        Image itemImage =
+            inventoryItemImages[slotIndex];
+
+        if (itemImage != null)
+        {
+            itemImage.sprite = null;
+
+            Color color =
+                itemImage.color;
+
+            color.a = 0f;
+
+            itemImage.color =
+                color;
+        }
+
+        if (inventoryItemButtons != null &&
+    slotIndex < inventoryItemButtons.Length &&
+    inventoryItemButtons[slotIndex] != null)
+        {
+            inventoryItemButtons[slotIndex].interactable = false;
+        }
+
+        ItemCount =
+            Mathf.Max(0, ItemCount - 1);
     }
 
     public ShopItemData GetItem(int slotIndex)
@@ -144,5 +203,66 @@ public class InventoryManager : MonoBehaviour
         Color color = image.color;
         color.a = opacity;
         image.color = color;
+    }
+
+    private void RegisterButtonListeners()
+    {
+        if (inventoryItemButtons == null)
+        {
+            Debug.LogError(
+                "Inventory item buttons array is not assigned.",
+                this
+            );
+
+            return;
+        }
+
+        if (inventoryItemButtons.Length != inventoryItems.Length)
+        {
+            Debug.LogError(
+                "The number of inventory buttons must match " +
+                "the number of inventory item images.",
+                this
+            );
+
+            return;
+        }
+
+        for (int i = 0; i < inventoryItemButtons.Length; i++)
+        {
+            Button button = inventoryItemButtons[i];
+
+            if (button == null)
+            {
+                Debug.LogWarning(
+                    $"Inventory slot {i} has no ItemButton assigned.",
+                    this
+                );
+
+                continue;
+            }
+
+            int capturedIndex = i;
+
+            button.onClick.AddListener(
+                () => UseItem(capturedIndex)
+            );
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (inventoryItemButtons == null)
+        {
+            return;
+        }
+
+        foreach (Button button in inventoryItemButtons)
+        {
+            if (button != null)
+            {
+                button.onClick.RemoveAllListeners();
+            }
+        }
     }
 }

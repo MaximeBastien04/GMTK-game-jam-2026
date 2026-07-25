@@ -36,6 +36,10 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] private float initialPopupDelay = 2f;
     [SerializeField] private int lockedAdAmount = 3;
 
+    [Header("Typewriter Settings")]
+    [SerializeField] private float characterDelay = 0.03f;
+    [SerializeField] private bool allowSkipTyping = true;
+
     private bool dialogueConfirmed;
     private bool shopOpened;
     private bool magnifierPurchased;
@@ -44,6 +48,10 @@ public class TutorialManager : MonoBehaviour
     private int lockedAdsRemaining;
 
     private Coroutine tutorialRoutine;
+
+    private Coroutine typewriterRoutine;
+    private bool isTyping;
+    private string currentDialogue;
 
     public void BeginTutorial()
     {
@@ -75,25 +83,20 @@ public class TutorialManager : MonoBehaviour
         );
 
         SetDaveVisible(false);
-
         TutorialAd firstAd =
             SpawnTutorialAd(firstRewardAdPrefab);
 
-        yield return null;
+        if (firstAd == null)
+        {
+            Debug.LogError(
+                "The first tutorial ad could not be spawned.",
+                this
+            );
 
-        yield return ShowDialogue(
-            "Click on the cross on the ad to earn some money."
-        );
-
-        SetDaveVisible(false);
+            yield break;
+        }
 
         bool firstAdClosed = false;
-
-        if (firstAd != null)
-        {
-            firstAd.AdClosed +=
-                HandleFirstAdClosed;
-        }
 
         void HandleFirstAdClosed(
             TutorialAd closedAd
@@ -105,9 +108,55 @@ public class TutorialManager : MonoBehaviour
                 HandleFirstAdClosed;
         }
 
-        yield return new WaitUntil(
-            () => firstAdClosed
+        // Subscribe immediately, before showing the instruction.
+        firstAd.AdClosed +=
+            HandleFirstAdClosed;
+
+        yield return null;
+
+        // Start showing the instruction, but do not force the player
+        // to press OK before being allowed to close the ad.
+        BeginDialogue(
+            "Click on the close button on the ad to earn some money."
         );
+
+        // Wait until either:
+        // 1. The player confirms Dave's message.
+        // 2. The player closes the ad first.
+        yield return new WaitUntil(
+            () => dialogueConfirmed || firstAdClosed
+        );
+
+        if (firstAdClosed)
+        {
+            /*
+             * The player closed the ad while Dave was still visible.
+             * Replace the current instruction directly with the
+             * congratulations dialogue.
+             */
+            dialogueConfirmed = false;
+
+            yield return ShowDialogue(
+                "Great job! You earned 20 euros."
+            );
+        }
+        else
+        {
+            /*
+             * The player pressed OK first.
+             * Hide Dave and wait for the player to close the ad.
+             */
+            SetDaveVisible(false);
+
+            yield return new WaitUntil(
+                () => firstAdClosed
+            );
+
+            // Bring Dave back after the ad closes.
+            yield return ShowDialogue(
+                "Great job! You earned 20 euros."
+            );
+        }
 
         yield return ShowDialogue(
             "You should buy an item to make your work easier."
@@ -257,27 +306,93 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-    private IEnumerator ShowDialogue(
-        string dialogue
-    )
+    private IEnumerator ShowDialogue(string dialogue)
     {
-        dialogueConfirmed = false;
-
-        if (daveSpeechText != null)
-        {
-            daveSpeechText.text = dialogue;
-        }
-
-        SetDaveVisible(true);
+        BeginDialogue(dialogue);
 
         yield return new WaitUntil(
             () => dialogueConfirmed
         );
     }
 
+    private IEnumerator TypeDialogue(string dialogue)
+    {
+        isTyping = true;
+
+        if (daveSpeechText != null)
+        {
+            daveSpeechText.text = string.Empty;
+
+            foreach (char character in dialogue)
+            {
+                daveSpeechText.text += character;
+
+                yield return new WaitForSeconds(
+                    characterDelay
+                );
+            }
+        }
+
+        isTyping = false;
+        typewriterRoutine = null;
+    }
+
     private void ConfirmDialogue()
     {
+        if (isTyping)
+        {
+            if (!allowSkipTyping)
+            {
+                return;
+            }
+
+            if (typewriterRoutine != null)
+            {
+                StopCoroutine(typewriterRoutine);
+                typewriterRoutine = null;
+            }
+
+            if (daveSpeechText != null)
+            {
+                daveSpeechText.text =
+                    currentDialogue;
+            }
+
+            isTyping = false;
+
+            if (confirmButton != null)
+            {
+                confirmButton.interactable = true;
+            }
+
+            return;
+        }
+
         dialogueConfirmed = true;
+    }
+
+    private void BeginDialogue(string dialogue)
+    {
+        dialogueConfirmed = false;
+        currentDialogue = dialogue;
+
+        SetDaveVisible(true);
+
+        if (confirmButton != null)
+        {
+            confirmButton.interactable = true;
+        }
+
+        if (typewriterRoutine != null)
+        {
+            StopCoroutine(typewriterRoutine);
+            typewriterRoutine = null;
+        }
+
+        typewriterRoutine =
+            StartCoroutine(
+                TypeDialogue(dialogue)
+            );
     }
 
     private void HandleShopButtonClicked()
@@ -328,9 +443,7 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-    private TutorialAd SpawnTutorialAd(
-        TutorialAd prefab
-    )
+    private TutorialAd SpawnTutorialAd(TutorialAd prefab)
     {
         if (prefab == null ||
             adContainer == null)
@@ -455,9 +568,7 @@ public class TutorialManager : MonoBehaviour
 
         tutorialRoutine = null;
 
-        GameLoopManager gameLoop =
-            FindFirstObjectByType
-                <GameLoopManager>();
+        GameLoopManager gameLoop = FindAnyObjectByType<GameLoopManager>();
 
         if (gameLoop != null)
         {

@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class AdSpawner : MonoBehaviour
 {
@@ -21,6 +22,8 @@ public class AdSpawner : MonoBehaviour
     private Coroutine spawnRoutine;
     [SerializeField] private float minimumSpawnTime = 0.5f;
     [SerializeField] private float maximumSpawnTime = 3f;
+
+    private readonly List<Ad> spawnedAds = new List<Ad>();
 
     private void Start()
     {
@@ -95,21 +98,20 @@ public class AdSpawner : MonoBehaviour
 
     public void CloseAllAds()
     {
-        if (adContainer == null)
-        {
-            return;
-        }
+        RemoveMissingAds();
 
-        Ad[] activeAds =
-            adContainer.GetComponentsInChildren<Ad>(true);
+        List<Ad> adsToClose =
+            new List<Ad>(spawnedAds);
 
-        foreach (Ad activeAd in activeAds)
+        foreach (Ad ad in adsToClose)
         {
-            if (activeAd != null)
+            if (ad != null)
             {
-                Destroy(activeAd.gameObject);
+                ad.ForceCloseWithoutReward();
             }
         }
+
+        spawnedAds.Clear();
     }
 
     private void OnDisable()
@@ -141,11 +143,7 @@ public class AdSpawner : MonoBehaviour
         RectTransform prefabRect =
             selectedPrefab.GetComponent<RectTransform>();
 
-        GameObject newAd = Instantiate(
-            selectedPrefab,
-            adContainer,
-            false
-        );
+        GameObject newAd = Instantiate(selectedPrefab, adContainer, false);
 
         RectTransform adRect =
             newAd.GetComponent<RectTransform>();
@@ -161,6 +159,20 @@ public class AdSpawner : MonoBehaviour
         ApplyRandomColor(newAd);
 
         PositionAdInsideContainer(adRect);
+
+        Ad adComponent = newAd.GetComponent<Ad>();
+
+        if (adComponent != null)
+        {
+            spawnedAds.Add(adComponent);
+
+            adComponent.AdClosed += HandleAdClosed;
+        }
+
+        if (ItemEffectManager.Instance != null)
+        {
+            ItemEffectManager.Instance.ApplyActiveEffects(newAd);
+        }
     }
 
     private void ApplyRandomColor(GameObject newAd)
@@ -297,5 +309,63 @@ public class AdSpawner : MonoBehaviour
 
         adRect.anchoredPosition =
             randomLocalPosition - anchorReference;
+    }
+
+    private void HandleAdClosed(Ad closedAd)
+    {
+        if (closedAd == null)
+        {
+            return;
+        }
+
+        closedAd.AdClosed -=
+            HandleAdClosed;
+
+        spawnedAds.Remove(closedAd);
+    }
+
+    public int CloseLastAdsAndReward(int amount)
+    {
+        RemoveMissingAds();
+
+        int amountToClose =
+            Mathf.Min(amount, spawnedAds.Count);
+
+        if (amountToClose <= 0)
+        {
+            return 0;
+        }
+
+        List<Ad> adsToClose =
+            new List<Ad>();
+
+        // Start at the end because those are the newest ads.
+        for (int i = spawnedAds.Count - 1;
+             i >= 0 &&
+             adsToClose.Count < amountToClose;
+             i--)
+        {
+            Ad ad = spawnedAds[i];
+
+            if (ad != null &&
+                !ad.HasBeenClosed)
+            {
+                adsToClose.Add(ad);
+            }
+        }
+
+        foreach (Ad ad in adsToClose)
+        {
+            ad.ForceCloseAndReward();
+        }
+
+        return adsToClose.Count;
+    }
+
+    private void RemoveMissingAds()
+    {
+        spawnedAds.RemoveAll(
+            ad => ad == null || ad.HasBeenClosed
+        );
     }
 }

@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShopItemData
   itemName: Magnifier
   description: Expands Close button for the day
-  price: 25
+  price: 20
   sprite: {fileID: 21300000, guid: d9698cea7779af147ba6bb72db772776, type: 3}
+  itemType: 5

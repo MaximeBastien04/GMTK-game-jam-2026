@@ -48,6 +48,11 @@ public class GameLoopManager : MonoBehaviour
     private GameState currentState;
     private float timeRemaining;
 
+    public bool IsMinigameActive => currentState == GameState.Minigame;
+
+    [Header("Debug")]
+    [SerializeField] private bool skipTutorial = true;
+
     private void Awake()
     {
         if (loginStartButton != null)
@@ -104,6 +109,18 @@ public class GameLoopManager : MonoBehaviour
     {
         if (currentState != GameState.Login)
         {
+            return;
+        }
+
+        /*
+         * Debug option:
+         * When Skip Tutorial is enabled in the Inspector,
+         * bypass Dave's tutorial and open the initial shop.
+         */
+        if (skipTutorial)
+        {
+            StopAdGameplay();
+            OpenInitialShop();
             return;
         }
 
@@ -190,6 +207,11 @@ public class GameLoopManager : MonoBehaviour
         {
             EndGame();
             return;
+        }
+
+        if (ItemEffectManager.Instance != null)
+        {
+            ItemEffectManager.Instance.ResetShiftEffects();
         }
 
         currentState = GameState.Minigame;
@@ -379,6 +401,25 @@ public class GameLoopManager : MonoBehaviour
         {
             target.SetActive(isActive);
         }
+    }
+
+    public bool AddTime(float seconds)
+    {
+        if (currentState != GameState.Minigame)
+        {
+            return false;
+        }
+
+        if (seconds <= 0f)
+        {
+            return false;
+        }
+
+        timeRemaining += seconds;
+
+        UpdateTimerText(timeRemaining);
+
+        return true;
     }
 
     private void OnDestroy()

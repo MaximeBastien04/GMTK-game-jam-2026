@@ -1,5 +1,15 @@
 using UnityEngine;
 
+public enum ShopItemType
+{
+    Antivirus,
+    AntivirusPremium,
+    Clover,
+    Coffee,
+    Hourglass,
+    Magnifier
+}
+
 [CreateAssetMenu(
     fileName = "New Shop Item",
     menuName = "Shop/Shop Item"
@@ -16,4 +26,7 @@ public class ShopItemData : ScriptableObject
     public int price;
 
     public Sprite sprite;
+
+    [Header("Item Effect")]
+    public ShopItemType itemType;
 }

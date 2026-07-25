@@ -16,3 +16,4 @@ MonoBehaviour:
   description: Make all time-limited ads stay 5 seconds longer
   price: 20
   sprite: {fileID: 21300000, guid: f6cb9f15d2e36034b91117ad79639f57, type: 3}
+  itemType: 4
