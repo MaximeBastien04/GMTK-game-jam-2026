@@ -40,6 +40,13 @@ public class GameLoopManager : MonoBehaviour
     [SerializeField] private TMP_Text timerText;
     [SerializeField] private TMP_Text dayText;
 
+    [Header("Timer Warning")]
+    [Min(0f)]
+    [SerializeField] private float timerFlickerThreshold = 3f;
+
+    [Min(0.1f)]
+    [SerializeField] private float timerFlickerSpeed = 4f;
+
     public int CompletedShifts { get; private set; }
 
     public int CurrentJulyDay =>
@@ -103,6 +110,7 @@ public class GameLoopManager : MonoBehaviour
 
         UpdateDayText();
         UpdateTimerText(shiftDuration);
+        SetTimerOpacity(1f);
     }
 
     public void StartTutorial()
@@ -194,6 +202,7 @@ public class GameLoopManager : MonoBehaviour
 
         UpdateDayText();
         UpdateTimerText(shiftDuration);
+        SetTimerOpacity(1f);
     }
 
     public void StartNextShift()
@@ -228,6 +237,7 @@ public class GameLoopManager : MonoBehaviour
 
         UpdateDayText();
         UpdateTimerText(timeRemaining);
+        SetTimerOpacity(1f);
 
         if (adSpawner != null)
         {
@@ -245,12 +255,14 @@ public class GameLoopManager : MonoBehaviour
             timeRemaining = 0f;
 
             UpdateTimerText(timeRemaining);
+            SetTimerOpacity(1f);
             FinishShift();
 
             return;
         }
 
         UpdateTimerText(timeRemaining);
+        UpdateTimerFlicker();
     }
 
     private void FinishShift()
@@ -302,6 +314,7 @@ public class GameLoopManager : MonoBehaviour
 
         UpdateDayText();
         UpdateTimerText(shiftDuration);
+        SetTimerOpacity(1f);
     }
 
     private void EndGame()
@@ -325,6 +338,7 @@ public class GameLoopManager : MonoBehaviour
         }
 
         UpdateTimerText(0f);
+        SetTimerOpacity(1f);
     }
 
     private void StopAdGameplay()
@@ -345,6 +359,11 @@ public class GameLoopManager : MonoBehaviour
             return;
         }
 
+        /*
+         * Convert the full remaining duration into whole seconds first.
+         * Dividing by 60 and using modulo guarantees values such as
+         * 60 seconds display as 01:00 rather than 00:60.
+         */
         int displayedSeconds =
             Mathf.CeilToInt(
                 Mathf.Max(0f, seconds)
@@ -358,6 +377,53 @@ public class GameLoopManager : MonoBehaviour
 
         timerText.text =
             $"{minutes:00}:{remainingSeconds:00}";
+    }
+
+    private void UpdateTimerFlicker()
+    {
+        if (timerText == null)
+        {
+            return;
+        }
+
+        if (timeRemaining > timerFlickerThreshold)
+        {
+            SetTimerOpacity(1f);
+            return;
+        }
+
+        /*
+         * Alternate instantly between fully visible and invisible.
+         * FloorToInt creates a hard on/off flicker instead of a fade.
+         */
+        int flickerStep =
+            Mathf.FloorToInt(
+                Time.unscaledTime * timerFlickerSpeed
+            );
+
+        bool isVisible =
+            flickerStep % 2 == 0;
+
+        SetTimerOpacity(
+            isVisible ? 1f : 0f
+        );
+    }
+
+    private void SetTimerOpacity(float opacity)
+    {
+        if (timerText == null)
+        {
+            return;
+        }
+
+        Color timerColor =
+            timerText.color;
+
+        timerColor.a =
+            Mathf.Clamp01(opacity);
+
+        timerText.color =
+            timerColor;
     }
 
     private void UpdateDayText()
