@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -18,6 +19,8 @@ public class InventoryManager : MonoBehaviour
         ItemCount < inventoryItemImages.Length;
 
     private ShopItemData[] inventoryItems;
+
+    public event Action<ShopItemData> ItemUsed;
 
     private void Awake()
     {
@@ -95,6 +98,31 @@ public class InventoryManager : MonoBehaviour
 
         Debug.Log("Inventory is full.");
         return false;
+    }
+
+    public void UseItem(int slotIndex)
+    {
+        if (slotIndex < 0 ||
+            slotIndex >= inventoryItems.Length)
+        {
+            return;
+        }
+
+        ShopItemData item =
+            inventoryItems[slotIndex];
+
+        if (item == null)
+        {
+            return;
+        }
+
+        ItemUsed?.Invoke(item);
+
+        /*
+         * For now the item remains in the inventory.
+         * Later, you can consume it here if items
+         * should only be usable once.
+         */
     }
 
     public ShopItemData GetItem(int slotIndex)

@@ -30,6 +30,7 @@ public class GameLoopManager : MonoBehaviour
     [Header("References")]
     [SerializeField] private AdSpawner adSpawner;
     [SerializeField] private ShopManager shopManager;
+    [SerializeField] private TutorialManager tutorialManager;
 
     [Header("Buttons")]
     [SerializeField] private Button loginStartButton;
@@ -118,6 +119,18 @@ public class GameLoopManager : MonoBehaviour
         SetPlayButtonActive(false);
 
         StopAdGameplay();
+
+        if (tutorialManager != null)
+        {
+            tutorialManager.BeginTutorial();
+        }
+        else
+        {
+            Debug.LogError(
+                "No TutorialManager assigned.",
+                this
+            );
+        }
     }
 
     /// <summary>
