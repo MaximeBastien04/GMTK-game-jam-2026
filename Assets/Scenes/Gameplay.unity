@@ -1834,7 +1834,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: X
+  m_text: x
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d75b8d52b0c14bf419003d8f507da0c6, type: 2}
   m_sharedMaterial: {fileID: 3741524495941535488, guid: d75b8d52b0c14bf419003d8f507da0c6, type: 2}
@@ -7132,7 +7132,7 @@ MonoBehaviour:
   playButton: {fileID: 753577067}
   timerText: {fileID: 1670438787}
   dayText: {fileID: 653638280}
-  skipTutorial: 1
+  skipTutorial: 0
 --- !u!4 &1195852723
 Transform:
   m_ObjectHideFlags: 0
@@ -10575,7 +10575,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67df43ae41680fb45a2e23da203e139c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
-  startingMoney: 100
+  startingMoney: 0
   scoreText: {fileID: 1550272930}
 --- !u!4 &1905431918
 Transform:

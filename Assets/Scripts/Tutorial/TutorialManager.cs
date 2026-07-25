@@ -466,6 +466,13 @@ public class TutorialManager : MonoBehaviour
             adRect.anchoredPosition =
                 Vector2.zero;
         }
+        
+        if (ItemEffectManager.Instance != null)
+        {
+            ItemEffectManager.Instance.ApplyActiveEffects(
+                newAd.gameObject
+            );
+        }
 
         return newAd;
     }

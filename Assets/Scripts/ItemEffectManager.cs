@@ -141,11 +141,24 @@ public class ItemEffectManager : MonoBehaviour
     {
         MagnifierIsActive = true;
 
-        InsideButtonAd[] existingAds = FindObjectsByType<InsideButtonAd>();
+        // Apply to normal InsideButtonAds.
+        InsideButtonAd[] existingInsideButtonAds =
+            FindObjectsByType<InsideButtonAd>();
 
-        foreach (InsideButtonAd ad in existingAds)
+        foreach (InsideButtonAd ad in existingInsideButtonAds)
         {
-            ApplyMagnifierToAd(ad);
+            ApplyMagnifierToObject(ad.gameObject);
+        }
+
+        // Apply to tutorial ads that use the same visual hierarchy.
+        TutorialAd[] existingTutorialAds =
+            FindObjectsByType<TutorialAd>();
+
+        foreach (TutorialAd tutorialAd in existingTutorialAds)
+        {
+            ApplyMagnifierToObject(
+                tutorialAd.gameObject
+            );
         }
 
         return true;
@@ -160,35 +173,40 @@ public class ItemEffectManager : MonoBehaviour
 
         if (MagnifierIsActive)
         {
-            InsideButtonAd insideButtonAd =
-                spawnedAd.GetComponent<InsideButtonAd>();
-
-            if (insideButtonAd != null)
-            {
-                ApplyMagnifierToAd(
-                    insideButtonAd
-                );
-            }
+            ApplyMagnifierToObject(spawnedAd);
         }
     }
 
-    private void ApplyMagnifierToAd(
-        InsideButtonAd ad
-    )
+    public void ApplyMagnifierToObject(
+    GameObject adObject
+)
     {
-        if (ad == null)
+        if (adObject == null)
         {
             return;
         }
 
         Transform insideButtonTransform =
-            ad.transform.Find("InsideButton");
+            adObject.transform.Find("InsideButton");
+
+        if (insideButtonTransform == null)
+        {
+            /*
+             * Some prefabs may place InsideButton deeper
+             * in the hierarchy, so search recursively.
+             */
+            insideButtonTransform =
+                FindChildRecursive(
+                    adObject.transform,
+                    "InsideButton"
+                );
+        }
 
         if (insideButtonTransform == null)
         {
             Debug.LogWarning(
-                $"{ad.name}: Could not find child 'InsideButton'.",
-                ad
+                $"{adObject.name}: Could not find InsideButton.",
+                adObject
             );
 
             return;
@@ -221,6 +239,15 @@ public class ItemEffectManager : MonoBehaviour
         Transform textTransform =
             insideButtonTransform.Find("BtnText");
 
+        if (textTransform == null)
+        {
+            textTransform =
+                FindChildRecursive(
+                    insideButtonTransform,
+                    "BtnText"
+                );
+        }
+
         if (textTransform != null)
         {
             RectTransform textRect =
@@ -237,10 +264,7 @@ public class ItemEffectManager : MonoBehaviour
                 offsetMin.x =
                     textLeftInset;
 
-                /*
-                 * Unity stores the right inset as a negative
-                 * offsetMax.x value.
-                 */
+                // Unity stores the right inset as a negative value.
                 offsetMax.x =
                     -textRightInset;
 
@@ -261,16 +285,18 @@ public class ItemEffectManager : MonoBehaviour
                     magnifiedFontSize;
             }
         }
-        else
-        {
-            Debug.LogWarning(
-                $"{ad.name}: Could not find 'InsideButton/BtnText'.",
-                ad
-            );
-        }
 
         Transform closeButtonTransform =
             insideButtonTransform.Find("CloseButton");
+
+        if (closeButtonTransform == null)
+        {
+            closeButtonTransform =
+                FindChildRecursive(
+                    insideButtonTransform,
+                    "CloseButton"
+                );
+        }
 
         if (closeButtonTransform != null)
         {
@@ -279,23 +305,42 @@ public class ItemEffectManager : MonoBehaviour
 
             if (closeButtonRect != null)
             {
-                Vector2 closeButtonSize =
+                Vector2 size =
                     closeButtonRect.sizeDelta;
 
-                closeButtonSize.y =
+                size.y =
                     magnifiedButtonHeight;
 
                 closeButtonRect.sizeDelta =
-                    closeButtonSize;
+                    size;
             }
         }
-        else
+    }
+    private Transform FindChildRecursive(
+    Transform parent,
+    string childName
+)
+    {
+        foreach (Transform child in parent)
         {
-            Debug.LogWarning(
-                $"{ad.name}: Could not find 'InsideButton/CloseButton'.",
-                ad
-            );
+            if (child.name == childName)
+            {
+                return child;
+            }
+
+            Transform result =
+                FindChildRecursive(
+                    child,
+                    childName
+                );
+
+            if (result != null)
+            {
+                return result;
+            }
         }
+
+        return null;
     }
 
     public void ResetShiftEffects()
