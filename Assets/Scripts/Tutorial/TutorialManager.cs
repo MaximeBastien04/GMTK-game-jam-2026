@@ -12,7 +12,6 @@ public class TutorialManager : MonoBehaviour
 
     [Header("Main UI")]
     [SerializeField] private Button playButton;
-    [SerializeField] private Sprite playButtonDisabledSprite;
     [SerializeField] private Image playButtonImage;
 
     [Header("Shop")]
@@ -289,13 +288,6 @@ public class TutorialManager : MonoBehaviour
         if (playButton != null)
         {
             playButton.interactable = false;
-        }
-
-        if (playButtonImage != null &&
-            playButtonDisabledSprite != null)
-        {
-            playButtonImage.sprite =
-                playButtonDisabledSprite;
         }
 
         if (confirmButton != null)

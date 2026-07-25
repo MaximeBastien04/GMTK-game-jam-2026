@@ -243,20 +243,36 @@ public class AdSpawner : MonoBehaviour
             }
         }
 
-        // Change the inside button sprite when this ad has one.
-        Transform insideButtonTransform =
-            newAd.transform.Find("InsideButton");
+        /*
+         * CloseButtonAd has two separate Image components for its
+         * inside button. Let the ad update both with the same sprite.
+         */
+        CloseButtonAd closeButtonAd =
+            newAd.GetComponent<CloseButtonAd>();
 
-        if (insideButtonTransform != null)
+        if (closeButtonAd != null)
         {
-            Image insideButtonImage =
-                insideButtonTransform.GetComponent<Image>();
+            closeButtonAd.ApplyInsideButtonSprite(
+                selectedVariant.insideButtonSprite
+            );
+        }
+        else
+        {
+            // Keep support for other ad types with an InsideButton child.
+            Transform insideButtonTransform =
+                newAd.transform.Find("InsideButton");
 
-            if (insideButtonImage != null &&
-                selectedVariant.insideButtonSprite != null)
+            if (insideButtonTransform != null)
             {
-                insideButtonImage.sprite =
-                    selectedVariant.insideButtonSprite;
+                Image insideButtonImage =
+                    insideButtonTransform.GetComponent<Image>();
+
+                if (insideButtonImage != null &&
+                    selectedVariant.insideButtonSprite != null)
+                {
+                    insideButtonImage.sprite =
+                        selectedVariant.insideButtonSprite;
+                }
             }
         }
     }
