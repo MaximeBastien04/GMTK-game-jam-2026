@@ -261,8 +261,6 @@ public class ShopManager : MonoBehaviour
 
         selectedPlacement.MarkAsPurchased();
 
-        ApplyPurchasedItem(selectedItem);
-
         ItemPurchased?.Invoke(selectedItem);
 
         UpdateBuyButton();
@@ -281,7 +279,6 @@ public class ShopManager : MonoBehaviour
 
         selectedPlacement.MarkAsPurchased();
 
-        ApplyPurchasedItem(selectedItem);
         UpdateBuyButton();
     }
 
@@ -330,25 +327,6 @@ public class ShopManager : MonoBehaviour
         {
             SelectItem(itemPlacements[0]);
         }
-    }
-
-    private void ApplyPurchasedItem(
-        ShopItemData purchasedItem
-    )
-    {
-        /*
-         * Add the actual item effect here later.
-         *
-         * Examples:
-         * - Make close buttons larger
-         * - Slow down ad spawning
-         * - Increase rewards
-         * - Automatically close an ad
-         */
-
-        Debug.Log(
-            $"Purchased item: {purchasedItem.itemName}"
-        );
     }
 
     private void HandleMoneyChanged(int newAmount)

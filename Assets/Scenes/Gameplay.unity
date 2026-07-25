@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 16274495}
   - component: {fileID: 16274494}
   m_Layer: 0
-  m_Name: Text_Month (2)
+  m_Name: CalenderPriceText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -176,7 +176,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u20AC500"
+  m_text: "\u20AC10000"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d75b8d52b0c14bf419003d8f507da0c6, type: 2}
   m_sharedMaterial: {fileID: 3741524495941535488, guid: d75b8d52b0c14bf419003d8f507da0c6, type: 2}
@@ -203,15 +203,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 25.26
+  m_fontSizeBase: 25.26
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
@@ -242,7 +242,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0.6966121, z: 10.189156, w: 1.4079725}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   _SortingLayer: 0
@@ -4248,7 +4248,7 @@ GameObject:
   - component: {fileID: 745319176}
   - component: {fileID: 745319175}
   m_Layer: 0
-  m_Name: Text_Month (1)
+  m_Name: CalendarText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7130,7 +7130,7 @@ MonoBehaviour:
   tutorialManager: {fileID: 1669063300}
   loginStartButton: {fileID: 1982904481}
   playButton: {fileID: 753577067}
-  timerText: {fileID: 1670438787}
+  timerText: {fileID: 1411909175}
   dayText: {fileID: 653638280}
   skipTutorial: 0
 --- !u!4 &1195852723
@@ -7766,7 +7766,7 @@ GameObject:
   - component: {fileID: 1411909176}
   - component: {fileID: 1411909175}
   m_Layer: 0
-  m_Name: Text_Month (3)
+  m_Name: Text_Timer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9587,7 +9587,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1670438786
 RectTransform:
   m_ObjectHideFlags: 0
