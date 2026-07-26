@@ -164,7 +164,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u20AC10000"
+  m_text: "\u20AC1000"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d75b8d52b0c14bf419003d8f507da0c6, type: 2}
   m_sharedMaterial: {fileID: 3741524495941535488, guid: d75b8d52b0c14bf419003d8f507da0c6, type: 2}
@@ -191,8 +191,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 129.5
-  m_fontSizeBase: 129.5
+  m_fontSize: 156.6
+  m_fontSizeBase: 156.6
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
