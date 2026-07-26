@@ -165,7 +165,7 @@ public class MouseConstraint : MonoBehaviour
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             PlayClickSound();
-            
+
             if (currentHoveredObject != null)
             {
                 ExecuteEvents.Execute(
@@ -218,5 +218,18 @@ public class MouseConstraint : MonoBehaviour
             mouseClickClip,
             clickVolume
         );
+    }
+
+    public void DisableVirtualMouse()
+    {
+        if (virtualCursor != null)
+        {
+            virtualCursor.gameObject.SetActive(false);
+        }
+
+        enabled = false;
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 }

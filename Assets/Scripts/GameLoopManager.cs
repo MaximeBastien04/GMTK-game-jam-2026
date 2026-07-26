@@ -33,6 +33,7 @@ public class GameLoopManager : MonoBehaviour
     [SerializeField] private ShopManager shopManager;
     [SerializeField] private TutorialManager tutorialManager;
     [SerializeField] private CalendarManager calendarManager;
+    [SerializeField] private EndGameManager endGameManager;
 
     [Header("Buttons")]
     [SerializeField] private Button loginStartButton;
@@ -389,18 +390,47 @@ public class GameLoopManager : MonoBehaviour
         SetObjectActive(tutorialObject, false);
         SetObjectActive(minigameObject, false);
         SetObjectActive(shopObject, false);
-        SetObjectActive(gameOverObject, true);
+
+        // Do not activate a generic gameOverObject here.
+        SetObjectActive(gameOverObject, false);
 
         SetLoginButtonActive(false);
         SetPlayButtonActive(false);
 
-        if (dayText != null)
-        {
-            dayText.text = "AUGUST 1";
-        }
-
         UpdateTimerText(0f);
         SetTimerOpacity(1f);
+
+        int finalMoney = 0;
+
+        if (ScoreManager.Instance != null)
+        {
+            finalMoney =
+                ScoreManager.Instance.CurrentScore;
+        }
+        else
+        {
+            Debug.LogError(
+                "Cannot determine the ending because no ScoreManager exists.",
+                this
+            );
+        }
+
+        Debug.Log(
+            $"End-game money: €{finalMoney}. " +
+            $"Required to win: €10000."
+        );
+
+        if (endGameManager != null)
+        {
+            endGameManager.BeginEndGame(finalMoney);
+        }
+        else
+        {
+            Debug.LogError(
+                "GameLoopManager has no EndGameManager assigned.",
+                this
+            );
+        }
     }
 
     private void StopAdGameplay()
