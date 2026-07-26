@@ -235,6 +235,10 @@ public class TutorialManager : MonoBehaviour
         yield return new WaitUntil(
             () => falseAdClicked
         );
+        
+        yield return ShowDialogue(
+            "If you click the buy button you will lose money."
+        );
 
         yield return ShowDialogue(
             "Alright, you get the gist of it."
