@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Clover
   m_EditorClassIdentifier: Assembly-CSharp::ShopItemData
   itemName: Clover
-  description: Increases the amount of money an ads gives for the day
+  description: Increases the amount of money ads give for the day
   price: 50
   sprite: {fileID: 21300000, guid: e1717da6292277b4c92d2f7688e092ed, type: 3}
   itemType: 2
