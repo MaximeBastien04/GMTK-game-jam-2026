@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class MouseConstraint : MonoBehaviour
 {
@@ -20,15 +21,16 @@ public class MouseConstraint : MonoBehaviour
 
     private PointerEventData pointerEventData;
 
-    [Header("Click Sound")]
+    [Header("Audio")]
     [SerializeField] private AudioClip mouseClickClip;
+    [SerializeField] private AudioClip buttonHoverClip;
 
     [Range(0f, 1f)]
-    [SerializeField] private float clickVolume = 1f;
+    [SerializeField] private float volume = 1f;
 
     [SerializeField]
     private Vector2 clickPitchRange = new Vector2(0.95f, 1.05f);
-
+    private GameObject currentHoverSfxObject;
     private AudioSource audioSource;
 
     private void Start()
@@ -139,16 +141,61 @@ public class MouseConstraint : MonoBehaviour
         {
             if (currentHoveredObject != null)
             {
-                ExecuteEvents.ExecuteHierarchy(currentHoveredObject, pointerEventData, ExecuteEvents.pointerExitHandler);
+                ExecuteEvents.ExecuteHierarchy(
+                    currentHoveredObject,
+                    pointerEventData,
+                    ExecuteEvents.pointerExitHandler
+                );
             }
 
             if (hoveredObject != null)
             {
-                ExecuteEvents.ExecuteHierarchy(hoveredObject, pointerEventData, ExecuteEvents.pointerEnterHandler);
+                ExecuteEvents.ExecuteHierarchy(
+                    hoveredObject,
+                    pointerEventData,
+                    ExecuteEvents.pointerEnterHandler
+                );
             }
 
             currentHoveredObject =
                 hoveredObject;
+        }
+
+        UpdateHoveredObject(hoveredObject);
+    }
+
+    private void UpdateHoveredObject(
+    GameObject hoveredObject
+)
+    {
+        GameObject hoverSfxObject = null;
+
+        if (hoveredObject != null)
+        {
+            Transform current = hoveredObject.transform;
+
+            while (current != null)
+            {
+                if (current.CompareTag("HoverSFX"))
+                {
+                    hoverSfxObject = current.gameObject;
+                    break;
+                }
+
+                current = current.parent;
+            }
+        }
+
+        if (hoverSfxObject == currentHoverSfxObject)
+        {
+            return;
+        }
+
+        currentHoverSfxObject = hoverSfxObject;
+
+        if (currentHoverSfxObject != null)
+        {
+            PlayHoverSound();
         }
     }
 
@@ -208,7 +255,21 @@ public class MouseConstraint : MonoBehaviour
 
         audioSource.PlayOneShot(
             mouseClickClip,
-            clickVolume
+            volume
+        );
+    }
+
+    private void PlayHoverSound()
+    {
+        if (buttonHoverClip == null ||
+            audioSource == null)
+        {
+            return;
+        }
+
+        audioSource.PlayOneShot(
+            buttonHoverClip,
+            0.2f
         );
     }
 

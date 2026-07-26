@@ -2494,7 +2494,7 @@ GameObject:
   - component: {fileID: 359605175}
   m_Layer: 5
   m_Name: ItemButton
-  m_TagString: Untagged
+  m_TagString: HoverSFX
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3446,7 +3446,7 @@ GameObject:
   - component: {fileID: 548667996}
   m_Layer: 5
   m_Name: ItemPlacementButton
-  m_TagString: Untagged
+  m_TagString: HoverSFX
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4820,7 +4820,7 @@ GameObject:
   - component: {fileID: 753577067}
   m_Layer: 5
   m_Name: PlayButton
-  m_TagString: Untagged
+  m_TagString: HoverSFX
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5225,7 +5225,7 @@ GameObject:
   - component: {fileID: 860198340}
   m_Layer: 5
   m_Name: ItemButton
-  m_TagString: Untagged
+  m_TagString: HoverSFX
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5363,7 +5363,7 @@ GameObject:
   - component: {fileID: 863644456}
   m_Layer: 5
   m_Name: ItemButton
-  m_TagString: Untagged
+  m_TagString: HoverSFX
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6009,7 +6009,7 @@ GameObject:
   - component: {fileID: 987035760}
   m_Layer: 5
   m_Name: BuyButton
-  m_TagString: Untagged
+  m_TagString: HoverSFX
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7386,7 +7386,7 @@ GameObject:
   - component: {fileID: 1171622772}
   m_Layer: 5
   m_Name: ItemPlacementButton
-  m_TagString: Untagged
+  m_TagString: HoverSFX
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7647,7 +7647,7 @@ GameObject:
   - component: {fileID: 1197252152}
   m_Layer: 5
   m_Name: ConfirmButton
-  m_TagString: Untagged
+  m_TagString: HoverSFX
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8887,7 +8887,7 @@ GameObject:
   - component: {fileID: 1500774138}
   m_Layer: 5
   m_Name: ItemPlacementButton
-  m_TagString: Untagged
+  m_TagString: HoverSFX
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9512,7 +9512,7 @@ GameObject:
   - component: {fileID: 1595858150}
   m_Layer: 5
   m_Name: ItemButton
-  m_TagString: Untagged
+  m_TagString: HoverSFX
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -10585,7 +10585,8 @@ MonoBehaviour:
   computerScreen: {fileID: 164832996}
   mouseSensitivity: 0.5
   mouseClickClip: {fileID: 8300000, guid: 449d89d2b08e4774f80bf1b558f4a72e, type: 3}
-  clickVolume: 0.3
+  buttonHoverClip: {fileID: 8300000, guid: cd42dc4de63aab7489040c6bf24c3adc, type: 3}
+  volume: 1
   clickPitchRange: {x: 0.95, y: 1.05}
 --- !u!4 &1712257806
 Transform:
