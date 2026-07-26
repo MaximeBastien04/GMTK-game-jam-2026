@@ -30,8 +30,22 @@ public class ShopManager : MonoBehaviour
 
     public event Action<ShopItemData> ItemPurchased;
 
+
+    [Header("Item buy Sound")]
+    [SerializeField] private AudioClip buySFX;
+
+    [Range(0f, 1f)]
+    [SerializeField] private float buySFXVolume = 1f;
+
+    [SerializeField]
+    private Vector2 buySFXPitchRange =
+        new Vector2(0.95f, 1.05f);
+
+    private AudioSource audioSource;
+
     private void Awake()
     {
+        audioSource = GetComponent<AudioSource>();
         if (buyButton != null)
         {
             buyButton.onClick.AddListener(BuySelectedItem);
@@ -259,6 +273,8 @@ public class ShopManager : MonoBehaviour
                 selectedItem.price
             );
 
+        PlayBuySFX();
+
         selectedPlacement.MarkAsPurchased();
 
         ItemPurchased?.Invoke(selectedItem);
@@ -405,6 +421,18 @@ public class ShopManager : MonoBehaviour
         {
             ScoreManager.Instance.ScoreChanged -=
                 HandleMoneyChanged;
+        }
+    }
+
+    private void PlayBuySFX()
+    {
+        if (buySFX != null)
+        {
+            audioSource.PlayOneShot(buySFX, buySFXVolume);
+            audioSource.pitch = UnityEngine.Random.Range(
+                buySFXPitchRange.x,
+                buySFXPitchRange.y
+            );
         }
     }
 }

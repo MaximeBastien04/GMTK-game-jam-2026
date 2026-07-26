@@ -7598,7 +7598,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30de9948e8e971544a675511470486c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameLoopManager
-  shiftDuration: 10
+  shiftDuration: 30
   totalShifts: 30
   loginObject: {fileID: 1012163982}
   tutorialObject: {fileID: 1779820796}
