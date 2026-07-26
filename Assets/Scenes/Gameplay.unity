@@ -176,7 +176,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u20AC10000"
+  m_text: "\u20AC1000"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d75b8d52b0c14bf419003d8f507da0c6, type: 2}
   m_sharedMaterial: {fileID: 3741524495941535488, guid: d75b8d52b0c14bf419003d8f507da0c6, type: 2}
@@ -185,8 +185,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4280754731
-  m_fontColor: {r: 0.16862746, g: 0.13333334, b: 0.15294118, a: 1}
+    rgba: 4289257469
+  m_fontColor: {r: 0.990566, g: 0.8746547, b: 0.65881985, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -203,8 +203,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 25.26
-  m_fontSizeBase: 25.26
+  m_fontSize: 29.64
+  m_fontSizeBase: 29.64
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2795,10 +2795,10 @@ RectTransform:
   - {fileID: 548667995}
   m_Father: {fileID: 1017155468}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 1103.95, y: -167.5}
+  m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &382307414
 MonoBehaviour:
@@ -4374,10 +4374,10 @@ RectTransform:
   - {fileID: 1171622771}
   m_Father: {fileID: 1017155468}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 213.15, y: -167.5}
+  m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &712815131
 MonoBehaviour:
@@ -7174,10 +7174,10 @@ RectTransform:
   - {fileID: 1500774137}
   m_Father: {fileID: 1017155468}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 658.55, y: -167.5}
+  m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1146475004
 MonoBehaviour:
@@ -8598,7 +8598,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1452295141
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9146,7 +9146,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1539162265
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9962,7 +9962,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7165e6025d54bc345a78f85737935f64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EndGameManager
-  requiredMoneyToWin: 10000
+  requiredMoneyToWin: 1000
   winEndGame: {fileID: 1177839351}
   familyPicturePrefab: {fileID: 2446277422249573265, guid: ac6d44b11e5e79a4294df39e8211bbb5, type: 3}
   familyPictureParent: {fileID: 1808102506}
@@ -11651,7 +11651,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1824620228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11766,7 +11766,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67df43ae41680fb45a2e23da203e139c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
-  startingMoney: 100
+  startingMoney: 0
   scoreText: {fileID: 1550272930}
 --- !u!4 &1905431918
 Transform:
