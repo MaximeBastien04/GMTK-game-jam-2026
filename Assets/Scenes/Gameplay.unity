@@ -7616,7 +7616,7 @@ MonoBehaviour:
   dayText: {fileID: 653638280}
   timerFlickerThreshold: 3.5
   timerFlickerSpeed: 2
-  skipTutorial: 0
+  skipTutorial: 1
 --- !u!4 &1195852723
 Transform:
   m_ObjectHideFlags: 0
@@ -11766,7 +11766,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67df43ae41680fb45a2e23da203e139c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
-  startingMoney: 0
+  startingMoney: 100
   scoreText: {fileID: 1550272930}
 --- !u!4 &1905431918
 Transform:

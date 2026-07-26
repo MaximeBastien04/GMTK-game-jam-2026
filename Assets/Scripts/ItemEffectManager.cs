@@ -171,17 +171,26 @@ public class ItemEffectManager : MonoBehaviour
             return;
         }
 
+        // CloseButtonAd must never receive the magnifier effect.
+        if (spawnedAd.GetComponent<CloseButtonAd>() != null)
+        {
+            return;
+        }
+
         if (MagnifierIsActive)
         {
             ApplyMagnifierToObject(spawnedAd);
         }
     }
 
-    public void ApplyMagnifierToObject(
-    GameObject adObject
-)
+    public void ApplyMagnifierToObject(GameObject adObject)
     {
         if (adObject == null)
+        {
+            return;
+        }
+
+        if (adObject.GetComponent<CloseButtonAd>() != null)
         {
             return;
         }
@@ -191,25 +200,7 @@ public class ItemEffectManager : MonoBehaviour
 
         if (insideButtonTransform == null)
         {
-            /*
-             * Some prefabs may place InsideButton deeper
-             * in the hierarchy, so search recursively.
-             */
-            insideButtonTransform =
-                FindChildRecursive(
-                    adObject.transform,
-                    "InsideButton"
-                );
-        }
-
-        if (insideButtonTransform == null)
-        {
-            Debug.LogWarning(
-                $"{adObject.name}: Could not find InsideButton.",
-                adObject
-            );
-
-            return;
+            insideButtonTransform = FindChildRecursive(adObject.transform, "InsideButton");
         }
 
         RectTransform insideButtonRect =

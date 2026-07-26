@@ -182,9 +182,6 @@ MonoBehaviour:
   - {fileID: 21300000, guid: ca4b2dfd354050e4b9b67c370874edcc, type: 3}
   - {fileID: 21300000, guid: 541305bc2e909294ab94bc131a850277, type: 3}
   - {fileID: 21300000, guid: 40447bd313eac074292fc58b02095a9f, type: 3}
-  wrongButtonSFX: {fileID: 8300000, guid: 0333a7ca70513a140b5c1abc195f8164, type: 3}
-  wrongButtonSFXVolume: 0.5
-  wrongButtonSFXPitchRange: {x: 0.95, y: 1.05}
 --- !u!82 &3421869339877916847
 AudioSource:
   m_ObjectHideFlags: 0
@@ -415,7 +412,7 @@ GameObject:
   - component: {fileID: 1016540734686588347}
   - component: {fileID: 4398221531163063852}
   m_Layer: 5
-  m_Name: InsideButton
+  m_Name: BuyInsideButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
