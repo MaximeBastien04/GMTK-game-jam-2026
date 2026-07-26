@@ -48,9 +48,17 @@ public class ShopManager : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] private float failedBuySFXVolume = 1f;
 
-    [SerializeField] private float failedBuySFXPitch = 1f;
+    [SerializeField]
+    private Vector2 failedBuySFXPitchRange =
+        new Vector2(0.95f, 1.05f);
 
     private AudioSource audioSource;
+
+    [Header("Buy Button Animation")]
+    [SerializeField] private Animator buyButtonAnimator;
+
+    private static readonly int ShakeTrigger =
+        Animator.StringToHash("Shake");
 
     private void Awake()
     {
@@ -252,7 +260,8 @@ public class ShopManager : MonoBehaviour
         if (!inventoryManager.HasAvailableSlot)
         {
             ShowShopMessage("Your inventory is full.");
-            PlayFailedBuySFX();
+
+            PlayFailedBuyFeedback();
             return;
         }
 
@@ -262,7 +271,8 @@ public class ShopManager : MonoBehaviour
         if (!ScoreManager.Instance.CanAfford(selectedItem.price))
         {
             ShowShopMessage("You don't have enough money.");
-            PlayFailedBuySFX();
+
+            PlayFailedBuyFeedback();
             return;
         }
 
@@ -465,7 +475,31 @@ public class ShopManager : MonoBehaviour
 
     private void PlayFailedBuySFX()
     {
-        audioSource.pitch = failedBuySFXPitch;
-        audioSource.PlayOneShot(failedBuySFX,failedBuySFXVolume);
+        float minimumPitch = Mathf.Min(failedBuySFXPitchRange.x, failedBuySFXPitchRange.y);
+
+        float maximumPitch = Mathf.Max(failedBuySFXPitchRange.x, failedBuySFXPitchRange.y);
+
+        audioSource.pitch = UnityEngine.Random.Range(minimumPitch, maximumPitch);
+
+        audioSource.PlayOneShot(failedBuySFX, failedBuySFXVolume);
+    }
+
+
+    private void PlayFailedBuyFeedback()
+    {
+        PlayFailedBuySFX();
+
+        if (buyButtonAnimator == null)
+        {
+            return;
+        }
+
+        buyButtonAnimator.ResetTrigger(
+            ShakeTrigger
+        );
+
+        buyButtonAnimator.SetTrigger(
+            ShakeTrigger
+        );
     }
 }
