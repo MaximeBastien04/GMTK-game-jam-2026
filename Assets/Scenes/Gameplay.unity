@@ -2364,7 +2364,8 @@ MonoBehaviour:
   phaseStartMaximumSpawnTime: 2
   phaseEndMaximumSpawnTime: 1
   adSpawnClip: {fileID: 8300000, guid: a3e2d14ea2c556a49a0a14b15b849dd6, type: 3}
-  volume: 1
+  adCloseClip: {fileID: 8300000, guid: f94f336509f212a469083a193e5c484b, type: 3}
+  volume: 0.6
   pitchRange: {x: 0.8, y: 1.2}
 --- !u!4 &341337861
 Transform:
@@ -2393,7 +2394,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 0.6
   m_Pitch: 1
   Loop: 0
@@ -7616,7 +7617,7 @@ MonoBehaviour:
   dayText: {fileID: 653638280}
   timerFlickerThreshold: 3.5
   timerFlickerSpeed: 2
-  skipTutorial: 0
+  skipTutorial: 1
 --- !u!4 &1195852723
 Transform:
   m_ObjectHideFlags: 0

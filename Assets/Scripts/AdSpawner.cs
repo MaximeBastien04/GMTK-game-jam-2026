@@ -42,6 +42,7 @@ public class AdSpawner : MonoBehaviour
 
     [Header("Ad Spawn Sound")]
     [SerializeField] private AudioClip adSpawnClip;
+    [SerializeField] private AudioClip adCloseClip;
 
     [Range(0f, 1f)]
     [SerializeField] private float volume = 1f;
@@ -282,11 +283,7 @@ public class AdSpawner : MonoBehaviour
         return InterpolateMaximumSpawnTime(currentDay, 20, 31);
     }
 
-    private float InterpolateMaximumSpawnTime(
-        int currentDay,
-        int phaseStartDay,
-        int phaseEndDay
-    )
+    private float InterpolateMaximumSpawnTime(int currentDay, int phaseStartDay, int phaseEndDay)
     {
         float progress = Mathf.InverseLerp(
             phaseStartDay,
@@ -385,9 +382,7 @@ public class AdSpawner : MonoBehaviour
             }
         }
     }
-    private void PositionAdInsideContainer(
-        RectTransform adRect
-    )
+    private void PositionAdInsideContainer(RectTransform adRect)
     {
         Rect containerRect =
             adContainer.rect;
@@ -460,8 +455,9 @@ public class AdSpawner : MonoBehaviour
             return;
         }
 
-        closedAd.AdClosed -=
-            HandleAdClosed;
+        closedAd.AdClosed -= HandleAdClosed;
+
+        PlayAdCloseSFX();
 
         spawnedAds.Remove(closedAd);
     }
@@ -513,19 +509,20 @@ public class AdSpawner : MonoBehaviour
 
     public void PlaySpawnSound()
     {
-        if (adSpawnClip == null)
+        if (audioSource != null)
         {
-            return;
+            audioSource.pitch = Random.Range(pitchRange.x, pitchRange.y);
+            audioSource.PlayOneShot(adSpawnClip, volume);
         }
 
-        audioSource.pitch = Random.Range(
-            pitchRange.x,
-            pitchRange.y
-        );
+    }
 
-        audioSource.PlayOneShot(
-            adSpawnClip,
-            volume
-        );
+    private void PlayAdCloseSFX()
+    {
+        if (audioSource != null)
+        {
+            audioSource.pitch = Random.Range(pitchRange.x, pitchRange.y);
+            audioSource.PlayOneShot(adCloseClip, volume - 0.2f);
+        }
     }
 }
