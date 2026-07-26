@@ -2488,6 +2488,7 @@ GameObject:
   - component: {fileID: 359605174}
   - component: {fileID: 359605177}
   - component: {fileID: 359605176}
+  - component: {fileID: 359605178}
   - component: {fileID: 359605175}
   m_Layer: 5
   m_Name: ItemButton
@@ -2597,6 +2598,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 359605173}
   m_CullTransparentMesh: 1
+--- !u!114 &359605178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 359605173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f1305945e2986d43a1a1ea4c8fafb4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventorySlotHover
+  slotIndex: 2
+  itemNameText: {fileID: 1018503966}
+  itemDescriptionText: {fileID: 700714128}
+  defaultName: ' '
+  defaultDescription: ' '
 --- !u!1 &381417429
 GameObject:
   m_ObjectHideFlags: 0
@@ -4101,7 +4119,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Expands Close Button
+  m_text: ' '
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d75b8d52b0c14bf419003d8f507da0c6, type: 2}
   m_sharedMaterial: {fileID: 3741524495941535488, guid: d75b8d52b0c14bf419003d8f507da0c6, type: 2}
@@ -5201,6 +5219,7 @@ GameObject:
   - component: {fileID: 860198339}
   - component: {fileID: 860198342}
   - component: {fileID: 860198341}
+  - component: {fileID: 860198343}
   - component: {fileID: 860198340}
   m_Layer: 5
   m_Name: ItemButton
@@ -5310,6 +5329,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 860198338}
   m_CullTransparentMesh: 1
+--- !u!114 &860198343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 860198338}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f1305945e2986d43a1a1ea4c8fafb4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventorySlotHover
+  slotIndex: 0
+  itemNameText: {fileID: 1018503966}
+  itemDescriptionText: {fileID: 700714128}
+  defaultName: ' '
+  defaultDescription: ' '
 --- !u!1 &863644454
 GameObject:
   m_ObjectHideFlags: 0
@@ -5321,6 +5357,7 @@ GameObject:
   - component: {fileID: 863644455}
   - component: {fileID: 863644458}
   - component: {fileID: 863644457}
+  - component: {fileID: 863644459}
   - component: {fileID: 863644456}
   m_Layer: 5
   m_Name: ItemButton
@@ -5430,6 +5467,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 863644454}
   m_CullTransparentMesh: 1
+--- !u!114 &863644459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 863644454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f1305945e2986d43a1a1ea4c8fafb4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventorySlotHover
+  slotIndex: 1
+  itemNameText: {fileID: 1018503966}
+  itemDescriptionText: {fileID: 700714128}
+  defaultName: ' '
+  defaultDescription: ' '
 --- !u!1 &864509847
 GameObject:
   m_ObjectHideFlags: 0
@@ -6709,7 +6763,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Magnifying Glass
+  m_text: ' '
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d75b8d52b0c14bf419003d8f507da0c6, type: 2}
   m_sharedMaterial: {fileID: 3741524495941535488, guid: d75b8d52b0c14bf419003d8f507da0c6, type: 2}
@@ -9497,6 +9551,7 @@ GameObject:
   - component: {fileID: 1595858149}
   - component: {fileID: 1595858152}
   - component: {fileID: 1595858151}
+  - component: {fileID: 1595858153}
   - component: {fileID: 1595858150}
   m_Layer: 5
   m_Name: ItemButton
@@ -9606,6 +9661,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1595858148}
   m_CullTransparentMesh: 1
+--- !u!114 &1595858153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1595858148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f1305945e2986d43a1a1ea4c8fafb4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventorySlotHover
+  slotIndex: 3
+  itemNameText: {fileID: 1018503966}
+  itemDescriptionText: {fileID: 700714128}
+  defaultName: ' '
+  defaultDescription: ' '
 --- !u!1 &1608828023
 GameObject:
   m_ObjectHideFlags: 0
@@ -11591,7 +11663,7 @@ GameObject:
   - component: {fileID: 1824620229}
   - component: {fileID: 1824620228}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: EndGameCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

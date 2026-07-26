@@ -139,20 +139,12 @@ public class MouseConstraint : MonoBehaviour
         {
             if (currentHoveredObject != null)
             {
-                ExecuteEvents.Execute(
-                    currentHoveredObject,
-                    pointerEventData,
-                    ExecuteEvents.pointerExitHandler
-                );
+                ExecuteEvents.ExecuteHierarchy(currentHoveredObject, pointerEventData, ExecuteEvents.pointerExitHandler);
             }
 
             if (hoveredObject != null)
             {
-                ExecuteEvents.Execute(
-                    hoveredObject,
-                    pointerEventData,
-                    ExecuteEvents.pointerEnterHandler
-                );
+                ExecuteEvents.ExecuteHierarchy(hoveredObject, pointerEventData, ExecuteEvents.pointerEnterHandler);
             }
 
             currentHoveredObject =
