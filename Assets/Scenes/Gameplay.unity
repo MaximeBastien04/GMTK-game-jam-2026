@@ -12122,6 +12122,9 @@ MonoBehaviour:
   buySFX: {fileID: 8300000, guid: 18deb5db61bf65243a5c1b83992fa230, type: 3}
   buySFXVolume: 0.6
   buySFXPitchRange: {x: 0.95, y: 1.05}
+  failedBuySFX: {fileID: 8300000, guid: 0333a7ca70513a140b5c1abc195f8164, type: 3}
+  failedBuySFXVolume: 0.4
+  failedBuySFXPitchRange: {x: 0.9, y: 1.1}
 --- !u!4 &1989055467
 Transform:
   m_ObjectHideFlags: 0

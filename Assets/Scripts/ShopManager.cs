@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
+[RequireComponent(typeof(AudioSource))]
 public class ShopManager : MonoBehaviour
 {
     [Header("Available Items")]
@@ -40,6 +41,14 @@ public class ShopManager : MonoBehaviour
     [SerializeField]
     private Vector2 buySFXPitchRange =
         new Vector2(0.95f, 1.05f);
+
+    [Header("Failed buy Sound")]
+    [SerializeField] private AudioClip failedBuySFX;
+
+    [Range(0f, 1f)]
+    [SerializeField] private float failedBuySFXVolume = 1f;
+
+    [SerializeField] private float failedBuySFXPitch = 1f;
 
     private AudioSource audioSource;
 
@@ -243,6 +252,7 @@ public class ShopManager : MonoBehaviour
         if (!inventoryManager.HasAvailableSlot)
         {
             ShowShopMessage("Your inventory is full.");
+            PlayFailedBuySFX();
             return;
         }
 
@@ -252,6 +262,7 @@ public class ShopManager : MonoBehaviour
         if (!ScoreManager.Instance.CanAfford(selectedItem.price))
         {
             ShowShopMessage("You don't have enough money.");
+            PlayFailedBuySFX();
             return;
         }
 
@@ -426,13 +437,35 @@ public class ShopManager : MonoBehaviour
 
     private void PlayBuySFX()
     {
-        if (buySFX != null)
+        if (buySFX == null || audioSource == null)
         {
-            audioSource.PlayOneShot(buySFX, buySFXVolume);
-            audioSource.pitch = UnityEngine.Random.Range(
-                buySFXPitchRange.x,
-                buySFXPitchRange.y
-            );
+            return;
         }
+
+        float minimumPitch = Mathf.Min(
+            buySFXPitchRange.x,
+            buySFXPitchRange.y
+        );
+
+        float maximumPitch = Mathf.Max(
+            buySFXPitchRange.x,
+            buySFXPitchRange.y
+        );
+
+        audioSource.pitch = UnityEngine.Random.Range(
+            minimumPitch,
+            maximumPitch
+        );
+
+        audioSource.PlayOneShot(
+            buySFX,
+            buySFXVolume
+        );
+    }
+
+    private void PlayFailedBuySFX()
+    {
+        audioSource.pitch = failedBuySFXPitch;
+        audioSource.PlayOneShot(failedBuySFX,failedBuySFXVolume);
     }
 }
