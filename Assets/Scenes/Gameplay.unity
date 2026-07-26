@@ -7616,7 +7616,7 @@ MonoBehaviour:
   dayText: {fileID: 653638280}
   timerFlickerThreshold: 3.5
   timerFlickerSpeed: 2
-  skipTutorial: 1
+  skipTutorial: 0
 --- !u!4 &1195852723
 Transform:
   m_ObjectHideFlags: 0
