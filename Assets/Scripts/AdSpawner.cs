@@ -14,15 +14,30 @@ public class AdSpawner : MonoBehaviour
     }
 
     [Header("Ad Settings")]
-    [SerializeField] private GameObject[] adPrefabs;
     [SerializeField] private RectTransform adContainer;
     [SerializeField] private AdColorVariant[] adColorVariants;
+
+    [Header("Calendar Progression")]
+    [SerializeField] private CalendarManager calendarManager;
+
+    [Tooltip("Available from July 1.")]
+    [SerializeField] private GameObject closeButtonAdPrefab;
+
+    [Tooltip("Available from July 1.")]
+    [SerializeField] private GameObject insideButtonAdPrefab;
+
+    [Tooltip("Available from July 13.")]
+    [SerializeField] private GameObject multipleClickAdPrefab;
+
+    [Tooltip("Available from July 20.")]
+    [SerializeField] private GameObject captchaAdPrefab;
 
 
     [Header("Spawn Interval")]
     private Coroutine spawnRoutine;
     [SerializeField] private float minimumSpawnTime = 0.5f;
-    [SerializeField] private float maximumSpawnTime = 3f;
+    [SerializeField] private float phaseStartMaximumSpawnTime = 2f;
+    [SerializeField] private float phaseEndMaximumSpawnTime = 1f;
 
 
     [Header("Ad Spawn Sound")]
@@ -53,10 +68,10 @@ public class AdSpawner : MonoBehaviour
             return;
         }
 
-        if (adPrefabs == null || adPrefabs.Length == 0)
+        if (calendarManager == null)
         {
             Debug.LogError(
-                "AdSpawner does not have any ad prefabs assigned.",
+                "AdSpawner is missing the CalendarManager reference.",
                 this
             );
 
@@ -64,12 +79,20 @@ public class AdSpawner : MonoBehaviour
             return;
         }
 
-        foreach (GameObject prefab in adPrefabs)
+        GameObject[] progressionPrefabs =
+        {
+            closeButtonAdPrefab,
+            insideButtonAdPrefab,
+            multipleClickAdPrefab,
+            captchaAdPrefab
+        };
+
+        foreach (GameObject prefab in progressionPrefabs)
         {
             if (prefab == null)
             {
                 Debug.LogError(
-                    "One of the Ad Prefab entries is empty.",
+                    "One of the progression ad prefabs is not assigned.",
                     this
                 );
 
@@ -139,9 +162,12 @@ public class AdSpawner : MonoBehaviour
     {
         while (true)
         {
+            float currentMaximumSpawnTime =
+                GetMaximumSpawnTimeForCurrentDay();
+
             float waitTime = Random.Range(
                 minimumSpawnTime,
-                maximumSpawnTime
+                Mathf.Max(minimumSpawnTime, currentMaximumSpawnTime)
             );
 
             yield return new WaitForSeconds(waitTime);
@@ -152,8 +178,13 @@ public class AdSpawner : MonoBehaviour
 
     private void SpawnAd()
     {
+        GameObject[] availablePrefabs =
+            GetAvailablePrefabsForCurrentDay();
+
         GameObject selectedPrefab =
-            adPrefabs[Random.Range(0, adPrefabs.Length)];
+            availablePrefabs[
+                Random.Range(0, availablePrefabs.Length)
+            ];
 
         RectTransform prefabRect =
             selectedPrefab.GetComponent<RectTransform>();
@@ -190,6 +221,84 @@ public class AdSpawner : MonoBehaviour
         }
 
         PlaySpawnSound();
+    }
+
+    private GameObject[] GetAvailablePrefabsForCurrentDay()
+    {
+        int currentDay = calendarManager.CurrentDate.Day;
+
+        if (currentDay >= 20)
+        {
+            return new[]
+            {
+                closeButtonAdPrefab,
+                insideButtonAdPrefab,
+                multipleClickAdPrefab,
+                captchaAdPrefab
+            };
+        }
+
+        if (currentDay >= 13)
+        {
+            return new[]
+            {
+                closeButtonAdPrefab,
+                insideButtonAdPrefab,
+                multipleClickAdPrefab
+            };
+        }
+
+        return new[]
+        {
+            closeButtonAdPrefab,
+            insideButtonAdPrefab
+        };
+    }
+
+    private float GetMaximumSpawnTimeForCurrentDay()
+    {
+        int currentDay = calendarManager.CurrentDate.Day;
+
+        if (currentDay <= 10)
+        {
+            return InterpolateMaximumSpawnTime(currentDay, 1, 10);
+        }
+
+        if (currentDay < 13)
+        {
+            return phaseEndMaximumSpawnTime;
+        }
+
+        if (currentDay <= 17)
+        {
+            return InterpolateMaximumSpawnTime(currentDay, 13, 17);
+        }
+
+        if (currentDay < 20)
+        {
+            return phaseEndMaximumSpawnTime;
+        }
+
+        return InterpolateMaximumSpawnTime(currentDay, 20, 31);
+    }
+
+    private float InterpolateMaximumSpawnTime(
+        int currentDay,
+        int phaseStartDay,
+        int phaseEndDay
+    )
+    {
+        float progress = Mathf.InverseLerp(
+            phaseStartDay,
+            phaseEndDay,
+            currentDay
+        );
+
+        return Mathf.Lerp(
+            phaseStartMaximumSpawnTime,
+            phaseEndMaximumSpawnTime,
+            progress
+        );
     }
 
     private void ApplyRandomColor(GameObject newAd)

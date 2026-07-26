@@ -2344,11 +2344,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66fc1c88f0615f7488b43b5e22627d34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AdSpawner
-  adPrefabs:
-  - {fileID: 4670961179620885973, guid: 57559ae3e535b944985b819ba8f8d4c1, type: 3}
-  - {fileID: 5061420476210221450, guid: 4339235de7b4b044291ad1e3613a339f, type: 3}
-  - {fileID: 5874818990783644453, guid: ef2de4a8b6f28494dabec4297648372e, type: 3}
-  - {fileID: 3758133586124154222, guid: 68677cc1f2613e144942500dbfc6d340, type: 3}
   adContainer: {fileID: 1511694918}
   adColorVariants:
   - borderSprite: {fileID: 21300000, guid: 0d95c089504cbf342982717e4d3b9c13, type: 3}
@@ -2360,8 +2355,14 @@ MonoBehaviour:
   - borderSprite: {fileID: 21300000, guid: 3dc7282ece5d3a247a85ec811f09625a, type: 3}
     crossSprite: {fileID: 21300000, guid: 088df0944a5575e41b18d604ad2348fa, type: 3}
     insideButtonSprite: {fileID: 21300000, guid: 4d69434946712e741943978e857e24b8, type: 3}
+  calendarManager: {fileID: 1005889560}
+  closeButtonAdPrefab: {fileID: 4670961179620885973, guid: 57559ae3e535b944985b819ba8f8d4c1, type: 3}
+  insideButtonAdPrefab: {fileID: 5061420476210221450, guid: 4339235de7b4b044291ad1e3613a339f, type: 3}
+  multipleClickAdPrefab: {fileID: 5874818990783644453, guid: ef2de4a8b6f28494dabec4297648372e, type: 3}
+  captchaAdPrefab: {fileID: 3758133586124154222, guid: 68677cc1f2613e144942500dbfc6d340, type: 3}
   minimumSpawnTime: 0.5
-  maximumSpawnTime: 1
+  phaseStartMaximumSpawnTime: 2
+  phaseEndMaximumSpawnTime: 1
   adSpawnClip: {fileID: 8300000, guid: a3e2d14ea2c556a49a0a14b15b849dd6, type: 3}
   volume: 1
   pitchRange: {x: 0.8, y: 1.2}
@@ -7615,7 +7616,7 @@ MonoBehaviour:
   dayText: {fileID: 653638280}
   timerFlickerThreshold: 3.5
   timerFlickerSpeed: 2
-  skipTutorial: 1
+  skipTutorial: 0
 --- !u!4 &1195852723
 Transform:
   m_ObjectHideFlags: 0
@@ -7899,7 +7900,6 @@ GameObject:
   - component: {fileID: 1301712005}
   - component: {fileID: 1301712008}
   - component: {fileID: 1301712007}
-  - component: {fileID: 1301712006}
   m_Layer: 5
   m_Name: SettingsButton
   m_TagString: Untagged
@@ -7926,50 +7926,6 @@ RectTransform:
   m_AnchoredPosition: {x: 17.700012, y: -15}
   m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0, y: 1}
---- !u!114 &1301712006
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1301712004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 1301712007}
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &1301712007
 MonoBehaviour:
   m_ObjectHideFlags: 0
