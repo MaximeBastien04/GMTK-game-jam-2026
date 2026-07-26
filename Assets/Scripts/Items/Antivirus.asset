@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShopItemData
   itemName: Antivirus
   description: Closes 5 ads at once
-  price: 20
+  price: 10
   sprite: {fileID: 21300000, guid: f0101623b4bc1a04e9f786b792657c7b, type: 3}
+  itemType: 0
