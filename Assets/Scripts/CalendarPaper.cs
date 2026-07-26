@@ -30,8 +30,7 @@ public class CalendarPaper : MonoBehaviour
 
         if (monthText != null)
         {
-            monthText.text =
-                date.ToString("MMMM").ToUpperInvariant();
+            monthText.text = "JULY";
         }
 
         if (dayNumberText != null)
