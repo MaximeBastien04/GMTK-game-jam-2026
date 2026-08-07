@@ -171,16 +171,22 @@ public class ItemEffectManager : MonoBehaviour
             return;
         }
 
-        // CloseButtonAd must never receive the magnifier effect.
-        if (spawnedAd.GetComponent<CloseButtonAd>() != null)
+        if (!MagnifierIsActive)
         {
             return;
         }
 
-        if (MagnifierIsActive)
+        InsideButtonAd insideButtonAd =
+            spawnedAd.GetComponent<InsideButtonAd>();
+
+        if (insideButtonAd == null)
         {
-            ApplyMagnifierToObject(spawnedAd);
+            return;
         }
+
+        ApplyMagnifierToObject(
+            insideButtonAd.gameObject
+        );
     }
 
     public void ApplyMagnifierToObject(GameObject adObject)
